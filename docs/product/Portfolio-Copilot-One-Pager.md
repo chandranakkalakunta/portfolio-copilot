@@ -64,8 +64,12 @@ Portfolio-aware personalization, fully cited/auditable research, and multi-marke
 
 ---
 
-## Next documents (to be produced separately)
+## Related documents
 
-1. **Detailed requirements** — functional & non-functional, user stories, data sources per market, disclaimers.
-2. **Architecture & design** — agent designs, MCP server specs, data model, cloud-agnostic boundaries, sequence diagrams.
-3. **Implementation phases** — multi-week roadmap from MVP to production (eval, observability, deploy, CI).
+| Document | Path | Status |
+|---|---|---|
+| Detailed requirements | [`docs/requirements/Portfolio-Copilot-Requirements.md`](../requirements/Portfolio-Copilot-Requirements.md) | Draft v0.2 |
+| Architecture | `docs/architecture/` | Planned |
+| Design | `docs/design/` | Planned |
+| ADRs | `docs/adr/` | Planned |
+| Implementation phases | (roadmap; location TBD) | Planned |
