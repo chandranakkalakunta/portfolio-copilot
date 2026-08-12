@@ -19,6 +19,7 @@ This directory holds the Architecture Decision Records for Portfolio Copilot. An
 | [0011](0011-tech-stack-baseline.md) | Technology stack baseline (open-source / free-first) | Accepted |
 | [0012](0012-agent-framework-selection.md) | Agent framework selection (ADK vs LangGraph) | Proposed — pending spike |
 | [0013](0013-environment-isolation.md) | Environment isolation via separate GCP projects | Accepted |
+| [0014](0014-backend-web-framework.md) | Backend web framework — FastAPI | Accepted |
 
 ## Status legend
 
