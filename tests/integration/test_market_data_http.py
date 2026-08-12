@@ -13,9 +13,9 @@ from typing import Any
 import httpx
 import pytest
 import uvicorn
+
 from market_data import server as market_data_server
 from market_data.provider import MarketDataProvider
-
 from mcp import Client
 
 pytestmark = pytest.mark.integration

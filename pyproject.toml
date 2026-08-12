@@ -31,6 +31,9 @@ dev = [
 line-length = 100
 target-version = "py312"
 
+[tool.ruff.lint.isort]
+known-first-party = ["core", "api", "adapters", "market_data", "tests"]
+
 [tool.mypy]
 strict = true
 python_version = "3.12"
