@@ -10,7 +10,7 @@ This directory holds the Architecture Decision Records for Portfolio Copilot. An
 | [0002](0002-gcp-initial-cloud.md) | GCP as the initial cloud, portability preserved | Accepted |
 | [0003](0003-display-only-boundary.md) | Display-only / no real-execution safety boundary | Accepted |
 | [0004](0004-datastore-split.md) | State + analytical store split (Firestore + BigQuery) & data model | Accepted |
-| [0005](0005-mcp-boundaries-transport.md) | MCP server boundaries and transport | Accepted |
+| [0005](0005-mcp-boundaries-transport.md) | MCP server boundaries and transport | Accepted (transport superseded by ADR-0015) |
 | [0006](0006-runtime-reviewer-agent.md) | Runtime reviewer agent (propose→review→gate) | Accepted |
 | [0007](0007-caching-cost-budget.md) | Caching strategy and cost-budget policy | Accepted |
 | [0008](0008-prompt-injection-guardrails.md) | Prompt-injection / guardrail approach for ingested content | Accepted |
@@ -20,6 +20,7 @@ This directory holds the Architecture Decision Records for Portfolio Copilot. An
 | [0012](0012-agent-framework-selection.md) | Agent framework selection — ADK primary (LangGraph retained) | Accepted |
 | [0013](0013-environment-isolation.md) | Environment isolation via separate GCP projects | Accepted |
 | [0014](0014-backend-web-framework.md) | Backend web framework — FastAPI | Accepted |
+| [0015](0015-mcp-http-microservices-all-envs.md) | MCP servers as HTTP microservices in all environments | Accepted |
 
 ## Status legend
 
