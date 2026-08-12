@@ -394,7 +394,7 @@ portfolio-copilot/
     ports/         interfaces (AgentFramework, LLM, MarketData, State, ...)
   adapters/        concrete implementations per provider/cloud
     agent_adk/  agent_langgraph/  llm_vertex/  llm_grok/  store_firestore/ ...
-  mcp/             market_data/  filings/  news/  paper_trading/
+  mcp_servers/     market_data/  filings/  news/  paper_trading/  (not named mcp/ — avoids PyPI SDK shadow)
   api/             BFF / gateway
   web/             PWA dashboard
   infra/           terraform, cloud run, CI (WIF)
