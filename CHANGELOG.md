@@ -13,3 +13,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phase 0.2.2: keyless WIF pool/provider + deployer SA (Terraform), plan only
 - Phase 0.2.3: GitHub Actions keyless GCP auth (WIF) identity check
 - Phase 0.3.1: Artifact Registry + runtime SA + scoped deployer roles (Terraform, plan only)
+- Phase 0.3.2: FastAPI hello service with /health /ready /version (build id + deploy time, O31); Dockerfile
