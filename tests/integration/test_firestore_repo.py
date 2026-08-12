@@ -55,7 +55,7 @@ def test_profile_upsert_and_get() -> None:
             assert got.intent == "growth"
             assert await profiles.get("missing-user-xyz") is None
         finally:
-            await client.close()  # type: ignore[no-untyped-call]
+            client.close()  # type: ignore[no-untyped-call]
 
     asyncio.run(_run())
 
@@ -101,6 +101,6 @@ def test_portfolio_create_positions_and_isolation() -> None:
             assert {p.id for p in bob_list} == {bob_pf}
             assert all(p.user_id == alice for p in alice_list)
         finally:
-            await client.close()  # type: ignore[no-untyped-call]
+            client.close()  # type: ignore[no-untyped-call]
 
     asyncio.run(_run())
