@@ -18,6 +18,7 @@ This directory holds the Architecture Decision Records for Portfolio Copilot. An
 | [0010](0010-multi-market-conventions.md) | Multi-market conventions (US + India, benchmarks, TWR/MWR) | Accepted |
 | [0011](0011-tech-stack-baseline.md) | Technology stack baseline (open-source / free-first) | Accepted |
 | [0012](0012-agent-framework-selection.md) | Agent framework selection (ADK vs LangGraph) | Proposed — pending spike |
+| [0013](0013-environment-isolation.md) | Environment isolation via separate GCP projects | Accepted |
 
 ## Status legend
 
