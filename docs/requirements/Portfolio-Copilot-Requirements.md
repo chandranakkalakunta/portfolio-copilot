@@ -1,10 +1,10 @@
 # Portfolio Copilot — Requirements
 
 **Document:** Detailed Product Requirements
-**Version:** 0.3.2 (draft)
+**Version:** 0.4 (draft)
 **Last updated:** 12 August 2026
 **Status:** Draft for review
-**Change log:** v0.3.2 — F58 Google Sign-In is sole v1 auth (no email+password at launch); open question #8 closed on method. v0.3.1 — F58 primary auth = Google Sign-In (OAuth/OIDC) behind a pluggable auth port; F58a additional IdPs (P2); open question #8 narrowed. v0.3 — broadened coverage to the full functional + non-functional gamut: identity & access (F58–F62), notifications delivery (F63–F65), and a detailed Operational, Reliability & Platform section §11 (CI/CD & release, environments & IaC, testing & QA, availability & SLOs, disaster recovery & backup, incident response & operability, data lifecycle & governance, rate limiting & abuse, accessibility & i18n, maintainability & supportability); extended the NFR summary table; added erasure/residency to compliance and DR/auth/i18n to open questions. v0.2 — added PWA (F53); modularity/pluggability (§6.12, F54–F56); internet-scale scalability (NFR P0); open-source/free-first sourcing.
+**Change log:** v0.4 — FastAPI selected as backend web framework (ADR-0014); added version-aware UI / no-stale-cache (F66, P0) and verifiable deploys exposing build-ID + deploy-time on `/health` & `/ready` (O31, P0). v0.3.2 — F58 Google Sign-In is sole v1 auth (no email+password at launch); open question #8 closed on method. v0.3.1 — F58 primary auth = Google Sign-In (OAuth/OIDC) behind a pluggable auth port; F58a additional IdPs (P2); open question #8 narrowed. v0.3 — broadened coverage to the full functional + non-functional gamut: identity & access (F58–F62), notifications delivery (F63–F65), and a detailed Operational, Reliability & Platform section §11 (CI/CD & release, environments & IaC, testing & QA, availability & SLOs, disaster recovery & backup, incident response & operability, data lifecycle & governance, rate limiting & abuse, accessibility & i18n, maintainability & supportability); extended the NFR summary table; added erasure/residency to compliance and DR/auth/i18n to open questions. v0.2 — added PWA (F53); modularity/pluggability (§6.12, F54–F56); internet-scale scalability (NFR P0); open-source/free-first sourcing.
 **Related documents:** Project One-Pager (`docs/product/Portfolio-Copilot-One-Pager.md`); Technical Architecture (`docs/architecture/Portfolio-Copilot-Architecture.md`, v0.1); Multi-Agent Engineering Protocol v4.0 (`chandra-prompts/`); Implementation Phases (`docs/implementation/Portfolio-Copilot-Implementation-Phases.md`, v0.1); Design notes (`docs/design/`, to be written); ADRs (`docs/adr/`, 0001–0012).
 
 > **Positioning & disclaimer.** Portfolio Copilot is an informational research and portfolio-tracking product. It is **display-only**: it never executes real trades and never moves real money. All outputs are informational and are **not investment advice**; the user is solely responsible for their own due diligence and decisions.
@@ -136,6 +136,7 @@ Priorities: **P0** = Must Have, **P1** = Should Have, **P2** = Could Have. IDs a
 - [ ] **F47 (P1)** Real vs paper portfolios shown side by side with benchmark overlays.
 - [ ] **F48 (P2)** Alerts/notifications when a holding's thesis materially changes or a new high-fit idea appears.
 - [ ] **F53 (P1)** **Progressive Web App (PWA)** — installable, responsive, add-to-home-screen, offline-tolerant shell (cached last-known holdings/valuation views), and push-capable for alerts (F48). No-flash first paint for theme/state (per engineering-protocol §5.28).
+- [ ] **F66 (P0)** **Version-aware UI / no stale cache** — the app detects when a newer deployed version is available and refreshes to it, and never serves stale cached HTML/JS/data. Concretely: a client-checkable version/build identifier (see O31); a PWA service-worker + cache strategy that updates on each deploy (network-first for the app shell/HTML, cache-bust HTML, long-cache only content-hashed immutable assets); and a visible "new version — refresh" prompt or controlled auto-refresh. Prevents the stale-cache failures seen previously (engineering-protocol §5.11 / §5.27 / §5.28).
 
 ### 6.11 Guardrails & Compliance Controls
 
@@ -237,6 +238,7 @@ Priorities as in §6. These make the "production-grade" goal concrete. v1 target
 - [ ] **O2 (P0)** Automated **CD** with **keyless deploys** (WIF, ADR-0009); versioned, reproducible builds; toolchain versions pinned (protocol §5.23).
 - [ ] **O3 (P0)** **Safe releases** — staged rollout, health checks, and automated **rollback**; verify "merged ≠ deployed ≠ deployed correctly" (protocol §8.3).
 - [ ] **O4 (P1)** **Feature flags** for progressive delivery and kill-switch of runtime features (e.g., reviewer agent, provider selection).
+- [ ] **O31 (P0)** **Verifiable deploys** — every service exposes `/health` (liveness) and `/ready` (readiness) endpoints that include the **build ID** and **deploy timestamp**, so the running version is confirmable at a glance ("merged ≠ deployed ≠ deployed correctly", protocol §8.3). CI injects the build ID at image build; the endpoints echo it (and it feeds the version-aware UI, F66).
 
 ### 11.2 Environments & Infrastructure-as-Code
 
