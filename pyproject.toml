@@ -9,8 +9,10 @@ dependencies = [
     "langchain-core>=1.5.4",
     "langchain-google-vertexai>=3.2.4",
     "langgraph>=1.2.11",
+    "mcp>=2.0.0",
     "pydantic-settings>=2.15.0",
     "uvicorn[standard]>=0.52.1",
+    "yfinance>=1.5.2",
 ]
 
 [dependency-groups]
@@ -43,12 +45,15 @@ module = [
     "langchain_core.*",
     "langchain_google_vertexai",
     "langchain_google_vertexai.*",
+    "yfinance",
+    "yfinance.*",
 ]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+# ``mcp/`` is on the path so ``market_data`` imports without shadowing the PyPI ``mcp`` SDK.
+pythonpath = [".", "mcp"]
 
 [build-system]
 requires = ["hatchling"]

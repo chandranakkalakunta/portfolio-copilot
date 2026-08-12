@@ -26,7 +26,7 @@ jobs:
         run: uv run ruff format --check .
 
       - name: Mypy
-        run: uv run mypy core api adapters tests
+        run: uv run mypy core api adapters mcp tests
 
       - name: Pytest
         run: uv run pytest -q
