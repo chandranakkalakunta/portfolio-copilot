@@ -1,11 +1,11 @@
 # Portfolio Copilot — Requirements
 
 **Document:** Detailed Product Requirements
-**Version:** 0.3.1 (draft)
+**Version:** 0.3.2 (draft)
 **Last updated:** 12 August 2026
 **Status:** Draft for review
-**Change log:** v0.3.1 — F58 primary auth = Google Sign-In (OAuth/OIDC) behind a pluggable auth port; F58a additional IdPs (P2); open question #8 narrowed. v0.3 — broadened coverage to the full functional + non-functional gamut: identity & access (F58–F62), notifications delivery (F63–F65), and a detailed Operational, Reliability & Platform section §11 (CI/CD & release, environments & IaC, testing & QA, availability & SLOs, disaster recovery & backup, incident response & operability, data lifecycle & governance, rate limiting & abuse, accessibility & i18n, maintainability & supportability); extended the NFR summary table; added erasure/residency to compliance and DR/auth/i18n to open questions. v0.2 — added PWA (F53); modularity/pluggability (§6.12, F54–F56); internet-scale scalability (NFR P0); open-source/free-first sourcing.
-**Related documents:** Project One-Pager (`docs/product/Portfolio-Copilot-One-Pager.md`); Technical Architecture (`docs/architecture/Portfolio-Copilot-Architecture.md`, v0.1); Multi-Agent Engineering Protocol v4.0 (`chandra-prompts/`); Design notes (`docs/design/`, to be written); ADRs (`docs/adr/`, 0001–0012).
+**Change log:** v0.3.2 — F58 Google Sign-In is sole v1 auth (no email+password at launch); open question #8 closed on method. v0.3.1 — F58 primary auth = Google Sign-In (OAuth/OIDC) behind a pluggable auth port; F58a additional IdPs (P2); open question #8 narrowed. v0.3 — broadened coverage to the full functional + non-functional gamut: identity & access (F58–F62), notifications delivery (F63–F65), and a detailed Operational, Reliability & Platform section §11 (CI/CD & release, environments & IaC, testing & QA, availability & SLOs, disaster recovery & backup, incident response & operability, data lifecycle & governance, rate limiting & abuse, accessibility & i18n, maintainability & supportability); extended the NFR summary table; added erasure/residency to compliance and DR/auth/i18n to open questions. v0.2 — added PWA (F53); modularity/pluggability (§6.12, F54–F56); internet-scale scalability (NFR P0); open-source/free-first sourcing.
+**Related documents:** Project One-Pager (`docs/product/Portfolio-Copilot-One-Pager.md`); Technical Architecture (`docs/architecture/Portfolio-Copilot-Architecture.md`, v0.1); Multi-Agent Engineering Protocol v4.0 (`chandra-prompts/`); Implementation Phases (`docs/implementation/Portfolio-Copilot-Implementation-Phases.md`, v0.1); Design notes (`docs/design/`, to be written); ADRs (`docs/adr/`, 0001–0012).
 
 > **Positioning & disclaimer.** Portfolio Copilot is an informational research and portfolio-tracking product. It is **display-only**: it never executes real trades and never moves real money. All outputs are informational and are **not investment advice**; the user is solely responsible for their own due diligence and decisions.
 
@@ -155,7 +155,7 @@ Cloud-agnostic is not only a deployment target — it is an implementation disci
 
 ### 6.13 Identity & Access
 
-- [ ] **F58 (P0)** Secure user **authentication** — **Google Sign-In (OAuth 2.0 / OpenID Connect)** as the **primary** method for v1, implemented behind a pluggable **auth port** (e.g., Firebase Authentication / Identity Platform on GCP, swappable per ADR-0001). Email+password is optional/secondary; any stored passwords are hashed (never plaintext); secure session management throughout.
+- [ ] **F58 (P0)** Secure user **authentication** — **Google Sign-In (OAuth 2.0 / OpenID Connect) is the sole sign-in method for v1**, implemented behind a pluggable **auth port** (Firebase Authentication / Identity Platform on GCP, swappable per ADR-0001). Secure session management; the product stores no passwords (credential handling delegated to Google). Other methods (email+password, additional providers) are deferred to a later phase and added via the same port.
 - [ ] **F58a (P2)** Additional identity providers (Apple, Microsoft, etc.) can be added via the same auth port without touching application logic.
 - [ ] **F59 (P0)** **Authorization & isolation** — every user can access only their own portfolios, notes, and activity; operator/admin capabilities are separated by role (enforces NFR Security).
 - [ ] **F60 (P0)** **Account lifecycle** — profile management, password reset, and account deletion (ties to right-to-erasure, §11.7 / §12).
@@ -322,7 +322,7 @@ Priorities as in §6. These make the "production-grade" goal concrete. v1 target
 5. Where Grok's X access fits at runtime (sentiment source) vs dev-time only.
 6. Real-holdings sync: which read-only broker/aggregator integrations, and in which phase.
 7. **Disaster recovery targets** — confirm RPO/RTO (proposed RPO ≤ 24h, RTO ≤ 4h) and backup cadence/restore-drill frequency.
-8. **Authentication approach** — Google Sign-In confirmed as the primary v1 method (F58); decide whether to *also* offer email+password at launch, MFA scope, and the account-deletion flow.
+8. **Authentication approach** — decided: **Google Sign-In only for v1** (F58). Remaining detail: MFA is delegated to the Google account; define the account-deletion / data-erasure flow (F60, O22).
 9. **Data residency & retention** windows per jurisdiction (US / India DPDP); audit-log scope and retention.
 10. **Internationalization** — confirm English-only UI for v1 with i18n-ready structure (vs adding a language at launch).
 11. **SLO/error-budget targets** and alerting thresholds (uptime, latency, cost-anomaly).
