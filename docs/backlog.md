@@ -42,7 +42,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | O2 | Keyless identity / CD auth | Phase 0.2.3 | ✓ Done | PR #4 |
 | O3 | Multi-env | Phase 0 | Partial | In progress |
 | O5 | Observability | Phase 0 | Partial | In progress |
-| O6 | IaC baseline | Phase 0.3 | Partial | AR + roles + CD workflow |
+| O6 | IaC baseline | Phase 0.3–2.3.1 | Partial → progress | WIF, AR, roles, CD; 2.3.1 APIs + Firestore in TF; rules/indexes + full multi-env later |
 | O31 | Verifiable deploys | Phase 0.3.2–0.3.3 | ✓ Done | PR #8, #9 |
 
 ## Infrastructure & Technical
@@ -53,6 +53,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Terraform state bucket created imperatively (bootstrap); consider `terraform import` later. | 0.2.x | Open | `gs://pcopilot-dev-tfstate` |
 | Tighten WIF trust to specific branch/GitHub environment in 0.3 (currently repo-scoped). | 0.3 | Open | Currently `assertion.repository` only |
 | Firestore security rules + composite indexes for portfolio queries | Phase 2.x | Open | After StatePort baseline (2.2) |
+| Identity Platform Google-provider + OAuth client (console) | Phase 2.6 | Open | Residual manual OAuth; real-token e2e with UI |
 
 ## Deferred (seeded)
 
