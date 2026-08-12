@@ -10,3 +10,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Phase 0.1: repo scaffolding, toolchain, CI skeleton
+- Phase 0.2.2: keyless WIF pool/provider + deployer SA (Terraform), plan only
