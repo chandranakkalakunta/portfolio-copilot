@@ -69,7 +69,7 @@ Portfolio-aware personalization, fully cited/auditable research, and multi-marke
 | Document | Path | Status |
 |---|---|---|
 | Detailed requirements | [`docs/requirements/Portfolio-Copilot-Requirements.md`](../requirements/Portfolio-Copilot-Requirements.md) | Draft v0.2 |
-| Architecture | `docs/architecture/` | Planned |
+| Architecture | [`docs/architecture/Portfolio-Copilot-Architecture.md`](../architecture/Portfolio-Copilot-Architecture.md) | Draft v0.1 |
 | Design | `docs/design/` | Planned |
 | ADRs | `docs/adr/` | Planned |
 | Implementation phases | (roadmap; location TBD) | Planned |

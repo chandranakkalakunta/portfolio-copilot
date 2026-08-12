@@ -12,7 +12,8 @@ docs/
 │   └── Portfolio-Copilot-One-Pager.md
 ├── requirements/     # Functional & non-functional requirements
 │   └── Portfolio-Copilot-Requirements.md
-├── architecture/     # System design, agents, MCP, data model (planned)
+├── architecture/     # System design, agents, MCP, data model
+│   └── Portfolio-Copilot-Architecture.md
 ├── design/           # Detailed design notes (planned)
 └── adr/              # Architecture Decision Records (planned)
 ```
@@ -21,9 +22,10 @@ docs/
 |---|---|
 | [One-Pager](docs/product/Portfolio-Copilot-One-Pager.md) | Problem, concept, agent architecture, stack, guardrails |
 | [Requirements](docs/requirements/Portfolio-Copilot-Requirements.md) | Detailed PRD — goals, use cases, FRs/NFRs (draft v0.2) |
+| [Architecture](docs/architecture/Portfolio-Copilot-Architecture.md) | Technical architecture — C4, agents, MCP, data, deployment (draft v0.1) |
 
 ## Status
 
-Early product definition. Requirements are **draft v0.2** for review; architecture and implementation are not started.
+Early product definition. Requirements **draft v0.2** and architecture **draft v0.1** are in review; implementation is not started.
 
-v0.2 adds PWA (F53), modularity/pluggability (§6.12, F54–F57), internet-scale scalability as P0, and open-source/free-first sourcing.
+Requirements v0.2 adds PWA (F53), modularity/pluggability (§6.12, F54–F57), internet-scale scalability as P0, and open-source/free-first sourcing.
