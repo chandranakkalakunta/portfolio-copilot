@@ -4,7 +4,7 @@
 **Version:** 0.1 (draft)
 **Last updated:** 11 August 2026
 **Status:** Draft for review
-**Related documents:** Requirements (`docs/requirements/Portfolio-Copilot-Requirements.md`, v0.3); One-Pager (`docs/product/Portfolio-Copilot-One-Pager.md`); Multi-Agent Engineering Protocol v4.0 (`chandra-prompts/`). ADRs: `docs/adr/` (0001–0012); further ADRs written per-decision during implementation (protocol §7.1, §7.5).
+**Related documents:** Requirements (`docs/requirements/Portfolio-Copilot-Requirements.md`, v0.3.1); One-Pager (`docs/product/Portfolio-Copilot-One-Pager.md`); Multi-Agent Engineering Protocol v4.0 (`chandra-prompts/`). ADRs: `docs/adr/` (0001–0012); further ADRs written per-decision during implementation (protocol §7.1, §7.5).
 
 > **Positioning & disclaimer.** Portfolio Copilot is **display-only**: it never executes real trades and never moves real money. All outputs are informational and **not investment advice**. This constraint is architectural — no component is permitted to place, route, or simulate-into-real any order.
 
