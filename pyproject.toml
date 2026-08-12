@@ -32,7 +32,13 @@ line-length = 100
 target-version = "py312"
 
 [tool.ruff.lint.isort]
+# Treat local packages as first-party; PyPI `mcp` stays third-party.
 known-first-party = ["core", "api", "adapters", "market_data", "tests"]
+known-third-party = ["mcp"]
+
+[tool.ruff.lint.per-file-ignores]
+# Scripts rewrite sys.path before imports; isort sectioning disagrees across environments.
+"scripts/**.py" = ["I001"]
 
 [tool.mypy]
 strict = true
