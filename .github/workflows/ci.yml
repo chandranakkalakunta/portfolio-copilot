@@ -9,6 +9,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history helps gitleaks detect secrets in commits on the PR branch
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -28,5 +31,14 @@ jobs:
       - name: Mypy
         run: uv run mypy core api adapters mcp_servers tests
 
-      - name: Pytest
-        run: uv run pytest -q
+      - name: Pytest with coverage gate
+        # Ratchet floor: measured ~69% locally → fail-under 65 (nearest 5% at or below)
+        run: uv run pytest --cov --cov-fail-under=65 --cov-report=term-missing
+
+      - name: Dependency vulnerability scan (pip-audit)
+        run: uv run pip-audit
+
+      - name: Secret scan (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
