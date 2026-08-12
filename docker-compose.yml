@@ -1,0 +1,20 @@
+# Local MCP microservices (ADR-0015 — HTTP in all envs, including local).
+#
+# Start market-data MCP:
+#   docker compose up market-data-mcp --build
+#
+# No-docker fallback:
+#   PORT=8081 PYTHONPATH=mcp_servers uv run python -m market_data.server
+
+services:
+  market-data-mcp:
+    build:
+      context: .
+      dockerfile: mcp_servers/market_data/Dockerfile
+      args:
+        BUILD_ID: local-compose
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: "8081"
+      BUILD_ID: local-compose

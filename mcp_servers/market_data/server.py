@@ -1,24 +1,51 @@
-"""Market-data MCP server (stdio) — get_quote + get_fundamentals (ADR-0005).
+"""Market-data MCP server over HTTP (streamable-HTTP) — ADR-0015.
 
-Run (stdio)::
+Run (no-docker fallback)::
 
-    PYTHONPATH=mcp_servers uv run python -m market_data.server
+    PORT=8081 PYTHONPATH=mcp_servers uv run python -m market_data.server
 
-Monorepo path is ``mcp_servers/market_data/``. Import package is ``market_data``.
-The directory is ``mcp_servers/`` (not ``mcp/``) so ``import mcp`` always resolves
-to the official PyPI MCP SDK.
+Docker Compose::
+
+    docker compose up market-data-mcp
+
+MCP endpoint: ``/mcp`` · Health: ``GET /health`` (O31).
 """
 
 from __future__ import annotations
 
+import os
+from datetime import UTC, datetime
 from typing import Any
 
 from mcp.server import MCPServer
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
 
 from market_data.provider import MarketDataProvider
 
+STARTED_AT: str = datetime.now(UTC).isoformat()
+BUILD_ID: str = os.environ.get("BUILD_ID", "dev")
+_DEPLOY_TIME: str | None = os.environ.get("DEPLOY_TIME")
+deployed_at: str = _DEPLOY_TIME if _DEPLOY_TIME else STARTED_AT
+
 mcp = MCPServer("market-data")
 _provider = MarketDataProvider()
+
+
+def health_payload() -> dict[str, str]:
+    """Plain /health body (O31) — used by route and hermetic tests."""
+    return {
+        "status": "ok",
+        "build_id": BUILD_ID,
+        "deployed_at": deployed_at,
+        "started_at": STARTED_AT,
+    }
+
+
+@mcp.custom_route("/health", methods=["GET"])  # type: ignore[untyped-decorator]
+async def health_check(_request: Request) -> Response:
+    """Liveness/readiness-style health with build id + deploy time."""
+    return JSONResponse(health_payload())
 
 
 @mcp.tool()
@@ -34,8 +61,14 @@ def get_fundamentals(ticker: str) -> dict[str, Any]:
 
 
 def main() -> None:
-    """Serve over stdio (MCP default for local/dev)."""
-    mcp.run(transport="stdio")
+    """Serve streamable-HTTP MCP on 0.0.0.0:$PORT (default 8081)."""
+    port = int(os.environ.get("PORT", "8081"))
+    mcp.run(
+        transport="streamable-http",
+        host="0.0.0.0",
+        port=port,
+        streamable_http_path="/mcp",
+    )
 
 
 if __name__ == "__main__":
