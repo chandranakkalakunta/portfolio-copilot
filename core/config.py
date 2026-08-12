@@ -17,4 +17,5 @@ class LLMSettings(BaseSettings):
 
     gcp_project: str = "pcopilot-dev"
     vertex_location: str = "us-central1"
-    gemini_model: str = "gemini-2.0-flash"
+    # Confirmed live in Phase 1.2 on Vertex (us-central1): gemini-2.5-flash
+    gemini_model: str = "gemini-2.5-flash"

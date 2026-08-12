@@ -54,4 +54,4 @@ def test_llm_settings_defaults() -> None:
     settings = LLMSettings()
     assert settings.gcp_project == "pcopilot-dev"
     assert settings.vertex_location == "us-central1"
-    assert settings.gemini_model == "gemini-2.0-flash"
+    assert settings.gemini_model == "gemini-2.5-flash"
