@@ -19,3 +19,12 @@ class LLMSettings(BaseSettings):
     vertex_location: str = "us-central1"
     # Confirmed live in Phase 1.2 on Vertex (us-central1): gemini-2.5-flash
     gemini_model: str = "gemini-2.5-flash"
+
+
+class MCPSettings(BaseSettings):
+    """MCP client endpoints (HTTP microservices in all envs — ADR-0015)."""
+
+    model_config = SettingsConfigDict(env_prefix="PCOPILOT_")
+
+    # Streamable-HTTP MCP path on the market-data service.
+    market_data_mcp_url: str = "http://localhost:8081/mcp"

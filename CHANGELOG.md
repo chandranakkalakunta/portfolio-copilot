@@ -22,3 +22,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phase 2.2: portfolio/profile domain + Firestore repositories (StatePort)
 - Phase 2.1.1: rename mcp/ → mcp_servers/ to avoid PyPI 'mcp' SDK shadowing
 - Phase 2.3: backend auth — AuthPort + Firebase ID-token verification + /me (F58 backend half)
+- Phase 2.2.1: market-data MCP over HTTP (ADR-0015) + Dockerfile + /health + compose
