@@ -1,2 +1,10 @@
 # Local Claude session staging (do not commit)
 claude-working/
+
+# Python / tooling
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
