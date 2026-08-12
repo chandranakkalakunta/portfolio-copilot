@@ -1,0 +1,23 @@
+name: GCP Keyless Auth Check
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  auth-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: pcopilot-dev
+          workload_identity_provider: projects/552451662981/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          service_account: gh-deployer@pcopilot-dev.iam.gserviceaccount.com
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Prove keyless identity
+        run: |
+          gcloud auth list
+          gcloud auth print-access-token >/dev/null && echo "Access token minted OK — keyless WIF working"
