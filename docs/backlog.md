@@ -21,6 +21,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 |----|------|-------|--------|-------|
 | — | Web framework choice | Phase 6 | Deferred | UI stack; API uses FastAPI (ADR-0014) |
 | F55 | No cloud SDK in core | Phase 0.1 | ✓ Done | Guard test + ADR-0001 |
+| F5 / F6 | Manual holdings / profile store (StatePort) | Phase 2.2 | In progress | Domain + Firestore + in-memory repos; security rules / indexes later |
 
 ## AI
 
@@ -49,6 +50,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Request billing quota increase before creating test/prod projects — billing account at 5-project limit. | Pre-0.2.x | Open | Blocks multi-env projects |
 | Terraform state bucket created imperatively (bootstrap); consider `terraform import` later. | 0.2.x | Open | `gs://pcopilot-dev-tfstate` |
 | Tighten WIF trust to specific branch/GitHub environment in 0.3 (currently repo-scoped). | 0.3 | Open | Currently `assertion.repository` only |
+| Firestore security rules + composite indexes for portfolio queries | Phase 2.x | Open | After StatePort baseline (2.2) |
 
 ## Deferred (seeded)
 
