@@ -5,7 +5,7 @@
 **Last updated:** 11 August 2026
 **Status:** Draft for review
 **Change log:** v0.2 — added PWA (F53); modularity/pluggability as a first-class implementation requirement (§6.12, F54–F56); explicit internet-scale scalability to millions of users (NFR, now P0); open-source/free-first sourcing principle (Goals, Constraints).
-**Related documents:** Project One-Pager (`docs/product/Portfolio-Copilot-One-Pager.md`); Technical Architecture (`docs/architecture/Portfolio-Copilot-Architecture.md`, v0.1); Multi-Agent Engineering Protocol v4.0 (`chandra-prompts/`); Design notes (`docs/design/`, to be written); ADRs (`docs/adr/`, to be written).
+**Related documents:** Project One-Pager (`docs/product/Portfolio-Copilot-One-Pager.md`); Technical Architecture (`docs/architecture/Portfolio-Copilot-Architecture.md`, v0.1); Multi-Agent Engineering Protocol v4.0 (`chandra-prompts/`); Design notes (`docs/design/`, to be written); ADRs (`docs/adr/`, 0001–0012).
 
 > **Positioning & disclaimer.** Portfolio Copilot is an informational research and portfolio-tracking product. It is **display-only**: it never executes real trades and never moves real money. All outputs are informational and are **not investment advice**; the user is solely responsible for their own due diligence and decisions.
 
