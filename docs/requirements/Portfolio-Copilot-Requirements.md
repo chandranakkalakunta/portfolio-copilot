@@ -1,10 +1,10 @@
 # Portfolio Copilot — Requirements
 
 **Document:** Detailed Product Requirements
-**Version:** 0.2 (draft)
-**Last updated:** 11 August 2026
+**Version:** 0.3 (draft)
+**Last updated:** 12 August 2026
 **Status:** Draft for review
-**Change log:** v0.2 — added PWA (F53); modularity/pluggability as a first-class implementation requirement (§6.12, F54–F56); explicit internet-scale scalability to millions of users (NFR, now P0); open-source/free-first sourcing principle (Goals, Constraints).
+**Change log:** v0.3 — broadened coverage to the full functional + non-functional gamut: identity & access (F58–F62), notifications delivery (F63–F65), and a detailed Operational, Reliability & Platform section §11 (CI/CD & release, environments & IaC, testing & QA, availability & SLOs, disaster recovery & backup, incident response & operability, data lifecycle & governance, rate limiting & abuse, accessibility & i18n, maintainability & supportability); extended the NFR summary table; added erasure/residency to compliance and DR/auth/i18n to open questions. v0.2 — added PWA (F53); modularity/pluggability (§6.12, F54–F56); internet-scale scalability (NFR P0); open-source/free-first sourcing.
 **Related documents:** Project One-Pager (`docs/product/Portfolio-Copilot-One-Pager.md`); Technical Architecture (`docs/architecture/Portfolio-Copilot-Architecture.md`, v0.1); Multi-Agent Engineering Protocol v4.0 (`chandra-prompts/`); Design notes (`docs/design/`, to be written); ADRs (`docs/adr/`, 0001–0012).
 
 > **Positioning & disclaimer.** Portfolio Copilot is an informational research and portfolio-tracking product. It is **display-only**: it never executes real trades and never moves real money. All outputs are informational and are **not investment advice**; the user is solely responsible for their own due diligence and decisions.
@@ -153,6 +153,20 @@ Cloud-agnostic is not only a deployment target — it is an implementation disci
 - [ ] **F56 (P1)** **Portability proven by design** — at least the LLM provider and the primary data/object store have a documented alternative-adapter path (even if only one adapter is implemented in v1), so the cloud-agnostic claim is demonstrable, not aspirational.
 - [ ] **F57 (P1)** **Pluggable data/model sources** — market-data, filings, news, and model providers are configuration-selectable, enabling the open-source/free-first → paid upgrade path (Goals) with no code change to consumers.
 
+### 6.13 Identity & Access
+
+- [ ] **F58 (P0)** Secure user **authentication** — sign-up / sign-in via email+password and/or social OAuth; passwords hashed (never stored plaintext); secure session management.
+- [ ] **F59 (P0)** **Authorization & isolation** — every user can access only their own portfolios, notes, and activity; operator/admin capabilities are separated by role (enforces NFR Security).
+- [ ] **F60 (P0)** **Account lifecycle** — profile management, password reset, and account deletion (ties to right-to-erasure, §11.7 / §12).
+- [ ] **F61 (P1)** **MFA** optional; session expiry/refresh; suspicious-login handling and lockout on repeated failures.
+- [ ] **F62 (P2)** **SSO** for a future enterprise/team scope.
+
+### 6.14 Notifications & Alerts (delivery)
+
+- [ ] **F63 (P1)** **Delivery channels** — in-app, web/PWA push, and email — for thesis-change/idea alerts (F48) and account/security events.
+- [ ] **F64 (P1)** **User-configurable preferences** — opt-in/opt-out per notification type; respect quiet hours; every alert carries the standard disclaimer.
+- [ ] **F65 (P2)** **Digest notifications** — optional periodic summary (e.g., weekly portfolio + track-record recap).
+
 ---
 
 ## 7. Data Sources (per market)
@@ -192,6 +206,16 @@ Cloud-agnostic is not only a deployment target — it is an implementation disci
 | Observability | Metrics, logs, and traces for operators without leaking sensitive content. | P0 |
 | Usability | Clear disclaimers, clear data-as-of markers, simple onboarding, honest track-record framing. | P0 |
 | Compliance | Display-only positioning maintained end to end; no feature introduces trade execution or advisory relationship. | P0 |
+| Availability & SLOs | Core read/valuation path target 99.9% uptime; latency objectives; graceful degradation when a provider/LLM is down. Detail §11.4. | P0 |
+| Disaster Recovery & Backup | Regular, tested backups; documented RPO/RTO. Detail §11.5. | P0 |
+| CI/CD & Release | Automated, gated pipeline; keyless deploys; safe rollout + rollback. Detail §11.1. | P0 |
+| Testing & QA | Unit/integration/e2e + MCP contract tests + eval harness gating agent/prompt changes. Detail §11.3. | P0 |
+| Data governance | Retention, right-to-erasure/export, residency, audit log. Detail §11.7. | P0 |
+| Accessibility | WCAG 2.1 AA for the web/PWA. Detail §11.9. | P1 |
+| Internationalization | Per-market currency/number/date formats; English UI in v1, i18n-ready. Detail §11.9. | P1 |
+| Maintainability | Code standards, pinned + patched dependencies, ADRs kept current. Detail §11.10. | P1 |
+
+> Operational and platform NFRs are specified in detail in **§11**; the rows above are the at-a-glance summary.
 
 ## 10. AI / Agent-Specific Requirements
 
@@ -202,15 +226,81 @@ Cloud-agnostic is not only a deployment target — it is an implementation disci
 - [ ] **A5 (P1)** **Model attribution** — outputs record which model/agent produced them (supports evaluation and the multi-model protocol).
 - [ ] **A6 (P1)** **Groundedness checks** — recommendations must trace to retrieved evidence; ungrounded claims are flagged or withheld.
 
-## 11. Compliance & Legal Positioning
+## 11. Operational, Reliability & Platform Requirements
+
+Priorities as in §6. These make the "production-grade" goal concrete. v1 targets are modest and grow with the product (see §13).
+
+### 11.1 CI/CD & Release Management
+
+- [ ] **O1 (P0)** Automated **CI** on every PR: lint, type-check, unit + integration tests, dependency/secret scanning, build — with branch-protected `main` (engineering protocol).
+- [ ] **O2 (P0)** Automated **CD** with **keyless deploys** (WIF, ADR-0009); versioned, reproducible builds; toolchain versions pinned (protocol §5.23).
+- [ ] **O3 (P0)** **Safe releases** — staged rollout, health checks, and automated **rollback**; verify "merged ≠ deployed ≠ deployed correctly" (protocol §8.3).
+- [ ] **O4 (P1)** **Feature flags** for progressive delivery and kill-switch of runtime features (e.g., reviewer agent, provider selection).
+
+### 11.2 Environments & Infrastructure-as-Code
+
+- [ ] **O5 (P0)** Separate **dev / staging / prod** environments with isolated data and credentials.
+- [ ] **O6 (P0)** All infrastructure and IAM defined **as code** (Terraform); nothing set manually/un-codified (protocol §5.32).
+- [ ] **O7 (P1)** Ephemeral **preview environments** per PR where feasible.
+
+### 11.3 Testing & Quality Assurance
+
+- [ ] **O8 (P0)** Test pyramid — unit + integration + end-to-end for deterministic code; **contract tests** for each MCP server.
+- [ ] **O9 (P0)** **Eval harness** for the non-deterministic analysis engine (A1) gates releases of agent/prompt changes.
+- [ ] **O10 (P1)** **Load/performance** testing against scale targets; **security testing** (SAST, dependency, secrets); **red-team eval set** for prompt-injection (A2).
+- [ ] **O11 (P1)** **Live/smoke tests** of external integrations in a real environment before "done" (mocked ≠ verified, protocol §5.31).
+
+### 11.4 Availability, Reliability & SLOs
+
+- [ ] **O12 (P0)** Defined **SLOs** — target uptime (proposed 99.9% for the core read/valuation path) and latency objectives; **error budgets** tracked.
+- [ ] **O13 (P0)** **No single point of failure** on the core read/valuation path; **graceful degradation** when a provider/LLM is unavailable (serve cached/last-known values with a clear data-as-of marker).
+- [ ] **O14 (P1)** Multi-zone deployment; health checks with auto-restart/autoscale.
+
+### 11.5 Disaster Recovery & Backup
+
+- [ ] **O15 (P0)** Regular **automated backups** of user state and analytical data; backups verified by periodic **restore drills** (a backup that has never been restored is not a backup).
+- [ ] **O16 (P0)** Documented **RPO and RTO** targets (proposed v1: RPO ≤ 24h, RTO ≤ 4h) — to be confirmed (§13).
+- [ ] **O17 (P1)** **DR runbook** and, as scale grows, cross-region/failover strategy; port-based data portability (ADR-0001) supports cross-cloud recovery.
+
+### 11.6 Incident Response & Operability
+
+- [ ] **O18 (P0)** **Alerting** on SLO breaches, error spikes, **cost anomalies**, and data-freshness failures — actionable and low-noise.
+- [ ] **O19 (P0)** **Runbooks** for common failures (provider outage, ADC/auth expiry, deploy failure — protocol §7.2); **blameless postmortems** after incidents.
+- [ ] **O20 (P1)** On-call / escalation process appropriate to team size.
+
+### 11.7 Data Lifecycle & Governance
+
+- [ ] **O21 (P0)** **Retention policy** per data class and market; automated purge/archival at end of retention.
+- [ ] **O22 (P0)** **Right-to-erasure & export** (DPDP/GDPR-aligned): delete-my-account removes personal data; export-my-data is provided.
+- [ ] **O23 (P0)** **Data residency** considered per jurisdiction (US/India); PII minimized and **encrypted in transit and at rest**.
+- [ ] **O24 (P1)** **Audit log** of security-relevant and admin actions — access-controlled and tamper-evident.
+
+### 11.8 Rate Limiting, Quotas & Abuse Prevention
+
+- [ ] **O25 (P0)** Per-user **rate limits and quotas** on expensive operations (analysis requests, data refresh) to bound cost and abuse.
+- [ ] **O26 (P1)** Bot/abuse protection on auth and public endpoints; anomaly detection on usage and cost.
+
+### 11.9 Accessibility & Internationalization
+
+- [ ] **O27 (P0)** **Accessibility** — WCAG 2.1 AA for the web/PWA (keyboard navigation, contrast, screen-reader labels, focus states).
+- [ ] **O28 (P0)** **Localization** of currency, number, and date formats per market (USD/US, INR/India); v1 UI language **English**, structured to be **i18n-ready** for future languages.
+
+### 11.10 Maintainability & Supportability
+
+- [ ] **O29 (P0)** Code-quality standards, current documentation and ADRs (engineering protocol); dependencies and toolchain **pinned, patched, and regularly updated**.
+- [ ] **O30 (P1)** Operator/admin tooling for config, provider toggles, and health; a user **support channel** and help/FAQ.
+
+## 12. Compliance & Legal Positioning
 
 - The product is **informational and display-only**; it is **not investment advice** and creates no advisory/fiduciary relationship (US: not an RIA service; India: not a SEBI-registered investment adviser service).
 - **No real-money execution** anywhere in the product; real holdings are tracked read-only for display.
 - Mandatory disclaimers on every recommendation, report, and performance view.
 - Data-protection compliance for user data in both jurisdictions (including India's DPDP Act); read-only broker connections use least-privilege, read-only scopes.
 - Market-data and news redistribution respects provider licensing terms (design-phase check per provider).
+- Users can **delete their account and export their data** (right-to-erasure / portability), aligned with DPDP/GDPR (see §11.7).
+- **Data residency** considered per jurisdiction; PII minimized and encrypted in transit and at rest; security-relevant actions are audit-logged (§11.7).
 
-## 12. Constraints & Assumptions
+## 13. Constraints & Assumptions
 
 - Users accept manual/CSV import for holdings initially; broker read-sync is a later enhancement.
 - Near-real-time data implies paid data providers; a caching layer is mandatory, not optional.
@@ -220,8 +310,9 @@ Cloud-agnostic is not only a deployment target — it is an implementation disci
 - Equities and equity ETFs only in v1 (no options/derivatives/crypto).
 - **Open-source / free-first.** v1 favors free or open-source models, data, and tooling to validate cheaply; premium data and higher-tier models are introduced only after the concept is proven. Because sources are pluggable (F57), this upgrade is a configuration/adapter change, not a rewrite.
 - Internet-scale (millions of users) is a design constraint on the architecture, not a v1 launch target — v1 is not over-built, but no decision may foreclose that scale.
+- **Operational maturity scales with the product** — v1 targets modest DR/availability (§11) rather than enterprise-grade multi-region/on-call from day one; the requirements define the direction, phases set the pace.
 
-## 13. Open Questions / Decisions to Resolve in Design
+## 14. Open Questions / Decisions to Resolve in Design
 
 1. Which specific market-data provider(s) give the best India coverage at acceptable cost and licensing?
 2. TWR and MWR both shown, or one primary with the other on demand? Default benchmark for India — Nifty 50 or BSE 100?
@@ -229,11 +320,16 @@ Cloud-agnostic is not only a deployment target — it is an implementation disci
 4. Framework confirmation: ADK as primary vs a LangGraph prototype comparison before committing (per earlier discussion).
 5. Where Grok's X access fits at runtime (sentiment source) vs dev-time only.
 6. Real-holdings sync: which read-only broker/aggregator integrations, and in which phase.
+7. **Disaster recovery targets** — confirm RPO/RTO (proposed RPO ≤ 24h, RTO ≤ 4h) and backup cadence/restore-drill frequency.
+8. **Authentication approach** — email+password vs social OAuth vs both for v1; MFA scope; account-deletion flow.
+9. **Data residency & retention** windows per jurisdiction (US / India DPDP); audit-log scope and retention.
+10. **Internationalization** — confirm English-only UI for v1 with i18n-ready structure (vs adding a language at launch).
+11. **SLO/error-budget targets** and alerting thresholds (uptime, latency, cost-anomaly).
 
 ---
 
-## 14. Traceability & Next Documents
+## 15. Traceability & Next Documents
 
-Each functional requirement (F#) and AI requirement (A#) will be traced to an implementation phase/PR in the project backlog (`docs/backlog.md`) per the Multi-Agent Engineering Protocol v4.0 (§7.7). Next documents: **Architecture & Design** (agent designs, MCP server specs, data model, cloud-agnostic boundaries, sequence diagrams) and **Implementation Phases** (multi-week roadmap to production).
+Each functional (F#), AI (A#), and operational (O#) requirement will be traced to an implementation phase/PR in the project backlog (`docs/backlog.md`) per the Multi-Agent Engineering Protocol v4.0 (§7.7). Next documents: **Architecture & Design** (agent designs, MCP server specs, data model, cloud-agnostic boundaries, sequence diagrams) and **Implementation Phases** (multi-week roadmap to production).
 
 *Structure adapted from the enterprise-llm-gateway requirements document and enhanced for Portfolio Copilot.*
