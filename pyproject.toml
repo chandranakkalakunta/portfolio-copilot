@@ -23,6 +23,8 @@ dev = [
     "mypy",
     "pytest",
     "httpx>=0.28.1",
+    "pytest-cov>=7.1.0",
+    "pip-audit>=2.10.1",
 ]
 
 [tool.ruff]
@@ -63,6 +65,15 @@ testpaths = ["tests"]
 # ``mcp_servers/`` holds local MCP apps; import package remains ``market_data``.
 # Named to avoid shadowing the official PyPI ``mcp`` SDK.
 pythonpath = [".", "mcp_servers"]
+
+[tool.coverage.run]
+source = ["core", "api", "adapters", "mcp_servers"]
+omit = ["tests/*", "scripts/*", "**/__pycache__/*"]
+branch = false
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
 
 [build-system]
 requires = ["hatchling"]
