@@ -40,9 +40,14 @@ jobs:
         run: uv run pip-audit
 
       - name: Secret scan (gitleaks)
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Run the binary on the checkout (avoids gitleaks-action PR API permission 403
+        # when GITHUB_TOKEN lacks pull_requests:read).
+        run: |
+          set -euo pipefail
+          curl -sSfL \
+            "https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz" \
+            | tar -xz gitleaks
+          ./gitleaks detect --source . --no-git --redact --verbose
 
   integration:
     runs-on: ubuntu-latest
