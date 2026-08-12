@@ -3,13 +3,17 @@ name = "portfolio-copilot"
 version = "0.1.0"
 description = "Portfolio Copilot monorepo"
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = [
+    "fastapi>=0.141.1",
+    "uvicorn[standard]>=0.52.1",
+]
 
 [dependency-groups]
 dev = [
     "ruff",
     "mypy",
     "pytest",
+    "httpx>=0.28.1",
 ]
 
 [tool.ruff]
