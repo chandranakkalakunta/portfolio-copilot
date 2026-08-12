@@ -17,3 +17,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phase 0.3.3: deploy-on-merge CD to Cloud Run (keyless WIF); Cloud Run service 'hello'
 - Phase 1.1: AgentFrameworkPort + stub tool + LLM config (spike foundation)
 - Phase 1.2: ADK adapter of the spike slice; first live Vertex Gemini call (gemini-2.5-flash)
+- Phase 1.3: LangGraph adapter of the spike slice; live Vertex Gemini smoke
