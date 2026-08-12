@@ -2,10 +2,11 @@
 
 Run (stdio)::
 
-    PYTHONPATH=mcp uv run python -m market_data.server
+    PYTHONPATH=mcp_servers uv run python -m market_data.server
 
-Monorepo path is ``mcp/market_data/``. The import package is ``market_data`` (not
-``mcp.market_data``) so we do not shadow the official PyPI ``mcp`` SDK.
+Monorepo path is ``mcp_servers/market_data/``. Import package is ``market_data``.
+The directory is ``mcp_servers/`` (not ``mcp/``) so ``import mcp`` always resolves
+to the official PyPI MCP SDK.
 """
 
 from __future__ import annotations

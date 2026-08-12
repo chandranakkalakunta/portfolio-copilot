@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[1]
-_MCP_DIR = _ROOT / "mcp"
+_MCP_DIR = _ROOT / "mcp_servers"
 for path in (_ROOT, _MCP_DIR):
     s = str(path)
     if s not in sys.path:
