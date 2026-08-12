@@ -26,8 +26,9 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 
 | ID | Item | Phase | Status | Notes |
 |----|------|-------|--------|-------|
-| ADR-0012 | Agent framework spike (ADK vs LangGraph) | Phase 1 | In progress | 1.1 foundation; 1.2 ADK (live); 1.3 LangGraph |
+| ADR-0012 | Agent framework spike (ADK vs LangGraph) | Phase 1 | In progress | 1.1 foundation; 1.2 ADK (live); 1.3 LangGraph (live, parity); 1.4 compare |
 | — | Confirmed Vertex Gemini model/region (Phase 1.2 live smoke) | Phase 1.2 | ✓ Done | `gemini-2.5-flash` @ `us-central1` (ADC/keyless); `gemini-2.0-flash` 404 in project |
+| — | LangGraph adapter parity (same instruction/tool/model as ADK) | Phase 1.3 | ✓ Done | `create_react_agent` + `ChatVertexAI`; live smoke on AAPL |
 
 ## Operational
 
