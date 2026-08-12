@@ -29,6 +29,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | ADR-0012 | Agent framework spike (ADK vs LangGraph) | Phase 1 | In progress | 1.1 foundation; 1.2 ADK (live); 1.3 LangGraph (live, parity); 1.4 compare |
 | — | Confirmed Vertex Gemini model/region (Phase 1.2 live smoke) | Phase 1.2 | ✓ Done | `gemini-2.5-flash` @ `us-central1` (ADC/keyless); `gemini-2.0-flash` 404 in project |
 | — | LangGraph adapter parity (same instruction/tool/model as ADK) | Phase 1.3 | ✓ Done | `create_react_agent` + `ChatVertexAI`; live smoke on AAPL |
+| F57 | Market-data MCP (yfinance skeleton) | Phase 2.1 | ✓ Done | `get_quote` / `get_fundamentals`; swap to licensed/paid behind MarketDataPort later; India coverage partial |
 
 ## Operational
 
@@ -52,5 +53,5 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 ## Deferred (seeded)
 
 - **Web framework choice (UI)** — Phase 6
-- **Real market-data MCP** — Phase 2 (stub in 1.1)
+- **Real market-data MCP (licensed/paid provider)** — later; 2.1 yfinance is skeleton only (F57)
 - **Agent framework decision** — Phase 1.2–1.4 (ADK vs LangGraph)

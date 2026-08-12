@@ -18,3 +18,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phase 1.1: AgentFrameworkPort + stub tool + LLM config (spike foundation)
 - Phase 1.2: ADK adapter of the spike slice; first live Vertex Gemini call (gemini-2.5-flash)
 - Phase 1.3: LangGraph adapter of the spike slice; live Vertex Gemini smoke
+- Phase 2.1: market-data MCP server (yfinance) with get_quote/get_fundamentals
