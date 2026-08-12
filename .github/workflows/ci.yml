@@ -31,9 +31,10 @@ jobs:
       - name: Mypy
         run: uv run mypy core api adapters mcp_servers tests
 
-      - name: Pytest with coverage gate
-        # Ratchet floor: measured ~69% locally → fail-under 65 (nearest 5% at or below)
-        run: uv run pytest --cov --cov-fail-under=65 --cov-report=term-missing
+      - name: Pytest unit + coverage gate
+        # Unit only; integration runs in a dedicated job (emulator / fake provider).
+        # Ratchet floor: measured ~69% → fail-under 65 (nearest 5% at or below)
+        run: uv run pytest -m "not integration" --cov --cov-fail-under=65 --cov-report=term-missing
 
       - name: Dependency vulnerability scan (pip-audit)
         run: uv run pip-audit
@@ -42,3 +43,56 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java (Firestore emulator)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          install_components: "beta,cloud-firestore-emulator"
+
+      - name: Start Firestore emulator
+        run: |
+          set -euo pipefail
+          gcloud emulators firestore start --host-port=127.0.0.1:8080 > /tmp/firestore-emulator.log 2>&1 &
+          echo $! > /tmp/firestore-emulator.pid
+          # Wait until the emulator accepts connections
+          for i in $(seq 1 60); do
+            if curl -sf "http://127.0.0.1:8080/" >/dev/null 2>&1 \
+              || nc -z 127.0.0.1 8080 2>/dev/null; then
+              echo "Firestore emulator is up (attempt $i)"
+              break
+            fi
+            sleep 1
+            if [ "$i" -eq 60 ]; then
+              echo "Firestore emulator failed to start"
+              cat /tmp/firestore-emulator.log || true
+              exit 1
+            fi
+          done
+          echo "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080" >> "$GITHUB_ENV"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install Python 3.12
+        run: uv python install 3.12
+
+      - name: Sync dependencies
+        run: uv sync
+
+      - name: Pytest integration
+        env:
+          FIRESTORE_EMULATOR_HOST: 127.0.0.1:8080
+          FIRESTORE_EMULATOR_PROJECT: pcopilot-ci-emulator
+        run: uv run pytest -m integration -q

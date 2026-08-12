@@ -65,6 +65,9 @@ testpaths = ["tests"]
 # ``mcp_servers/`` holds local MCP apps; import package remains ``market_data``.
 # Named to avoid shadowing the official PyPI ``mcp`` SDK.
 pythonpath = [".", "mcp_servers"]
+markers = [
+    "integration: needs emulator/local server (excluded from default unit run)",
+]
 
 [tool.coverage.run]
 source = ["core", "api", "adapters", "mcp_servers"]
