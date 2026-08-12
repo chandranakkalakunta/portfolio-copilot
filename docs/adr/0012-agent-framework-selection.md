@@ -1,18 +1,18 @@
 # ADR-0012: Agent framework selection (ADK vs LangGraph)
 
-- **Status:** Proposed — pending spike (2026-08-11)
+- **Status:** Accepted (2026-08-12) — decided after the Phase 1 spike (Proposed 2026-08-11)
 - **Deciders:** Coordinator (Chandra), Strategist
-- **Related:** requirements F21, F54; architecture §7.1, §16; behind `AgentFrameworkPort` (ADR-0001)
-
-> This ADR is intentionally **not yet decided**. Per the engineering protocol (§7.5), a decision ADR is written when the decision is actually made — here, after a hands-on spike. It is recorded now as Proposed so the number is reserved and the decision context, options, and criteria are captured. It will move to Accepted after the spike.
+- **Related:** requirements F21, F54; architecture §7.1, §16; behind `AgentFrameworkPort` (ADR-0001); spike write-up `docs/design/framework-spike-comparison.md`
 
 ## Context
 
-The analysis engine needs an agent/orchestration framework. The team is GCP-centric (favoring ADK's native Vertex/Gemini integration) but also wants the learning and de-risking of comparing ADK with LangGraph before committing. The orchestrator and agents are written against `AgentFrameworkPort` (ADR-0001), so the choice is swappable and the core is unaffected either way.
+The analysis engine needs an agent/orchestration framework. The team is GCP-centric (favoring ADK's native Vertex/Gemini integration) but also wanted the learning and de-risking of comparing ADK with LangGraph before committing. The orchestrator and agents are written against `AgentFrameworkPort` (ADR-0001), so the choice is swappable and the core is unaffected either way. The spike built the identical slice against both frameworks (Phases 1.2/1.3), both calling Vertex Gemini `gemini-2.5-flash` keyless; both produced correct, equivalent output with parity held.
 
-## Decision (pending)
+## Decision
 
-Build the **same minimal slice** — one specialist agent + orchestrator calling one MCP tool — against **both** an ADK adapter and a LangGraph adapter of `AgentFrameworkPort`, then select a **primary** framework and retain the other adapter as portability proof (F56). Decision to be recorded here once the spike completes.
+**ADK is the primary agent framework; the LangGraph adapter is retained as the portability proof (F56) and fallback.**
+
+The spike showed both frameworks work cleanly behind the port, so the decision turned on fit to this project: ADK is Google-native (first-class Vertex/Gemini), lighter (fewer lines, one primary dependency, plain-callable tools), and showed less ecosystem churn — LangGraph reached Vertex via an integration its own ecosystem already flags as deprecated. LangGraph's real edge is more mature control-flow primitives (explicit `StateGraph`, checkpointing, human-in-the-loop interrupts) relevant to the orchestrator + reviewer gate (ADR-0006), which is exactly why its adapter is **kept**, not discarded. Full analysis: `docs/design/framework-spike-comparison.md`.
 
 ## Evaluation criteria
 
@@ -25,11 +25,11 @@ Build the **same minimal slice** — one specialist agent + orchestrator calling
 - Testability (hermetic + eval)
 - Portability cost (how much leaks past the port)
 
-## Consequences (anticipated)
+## Consequences
 
-**Positive:** an evidence-based choice plus first-hand knowledge of both frameworks; portability proven by having two working adapters.
+**Positive:** an evidence-based choice plus first-hand knowledge of both frameworks; portability proven by two working adapters behind the port; ADK's GCP-native path keeps the Vertex/Gemini integration light and low-churn.
 
-**Negative / cost:** the spike costs time before the framework locks; two adapters to maintain until one is chosen.
+**Negative / cost:** ADK is younger (experimental warnings observed); we carry a second (LangGraph) adapter for portability, which is maintenance not currently exercised. If ADK proves limiting on complex control flow (checkpointing/interrupts), we switch primary to the retained LangGraph adapter — a change isolated to the adapter layer.
 
 ## Alternatives considered
 

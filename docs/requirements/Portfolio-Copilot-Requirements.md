@@ -318,7 +318,7 @@ Priorities as in §6. These make the "production-grade" goal concrete. v1 target
 1. Which specific market-data provider(s) give the best India coverage at acceptable cost and licensing?
 2. TWR and MWR both shown, or one primary with the other on demand? Default benchmark for India — Nifty 50 or BSE 100?
 3. Per-request log granularity and per-market data-retention windows.
-4. Framework confirmation: ADK as primary vs a LangGraph prototype comparison before committing (per earlier discussion).
+4. ~~Framework confirmation: ADK vs LangGraph~~ — **RESOLVED (Phase 1 spike): ADK primary, LangGraph adapter retained as portability proof (ADR-0012).**
 5. Where Grok's X access fits at runtime (sentiment source) vs dev-time only.
 6. Real-holdings sync: which read-only broker/aggregator integrations, and in which phase.
 7. **Disaster recovery targets** — confirm RPO/RTO (proposed RPO ≤ 24h, RTO ≤ 4h) and backup cadence/restore-drill frequency.
