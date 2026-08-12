@@ -5,6 +5,7 @@ description = "Portfolio Copilot monorepo"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "fastapi>=0.141.1",
+    "firebase-admin>=7.5.0",
     "google-adk>=2.6.3",
     "google-cloud-firestore>=2.28.1",
     "langchain-core>=1.5.4",
@@ -52,6 +53,8 @@ module = [
     "google.cloud.firestore.*",
     "google.cloud.firestore_v1",
     "google.cloud.firestore_v1.*",
+    "firebase_admin",
+    "firebase_admin.*",
 ]
 ignore_missing_imports = true
 

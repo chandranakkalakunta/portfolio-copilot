@@ -22,6 +22,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | — | Web framework choice | Phase 6 | Deferred | UI stack; API uses FastAPI (ADR-0014) |
 | F55 | No cloud SDK in core | Phase 0.1 | ✓ Done | Guard test + ADR-0001 |
 | F5 / F6 | Manual holdings / profile store (StatePort) | Phase 2.2 | In progress | Domain + Firestore + in-memory repos; security rules / indexes later |
+| F58 | Google Sign-In (backend ID-token verification) | Phase 2.3 | ✓ Backend done | AuthPort + Firebase adapter + `/me`; Google provider/OAuth-client console + real-token e2e in 2.6 |
 
 ## AI
 
