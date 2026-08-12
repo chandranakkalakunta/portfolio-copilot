@@ -20,3 +20,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phase 1.3: LangGraph adapter of the spike slice; live Vertex Gemini smoke
 - Phase 2.1: market-data MCP server (yfinance) with get_quote/get_fundamentals
 - Phase 2.2: portfolio/profile domain + Firestore repositories (StatePort)
+- Phase 2.1.1: rename mcp/ → mcp_servers/ to avoid PyPI 'mcp' SDK shadowing

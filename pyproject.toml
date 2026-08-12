@@ -57,8 +57,9 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-# ``mcp/`` is on the path so ``market_data`` imports without shadowing the PyPI ``mcp`` SDK.
-pythonpath = [".", "mcp"]
+# ``mcp_servers/`` holds local MCP apps; import package remains ``market_data``.
+# Named to avoid shadowing the official PyPI ``mcp`` SDK.
+pythonpath = [".", "mcp_servers"]
 
 [build-system]
 requires = ["hatchling"]

@@ -1,4 +1,4 @@
-"""Allow ``PYTHONPATH=mcp python -m market_data``."""
+"""Allow ``PYTHONPATH=mcp_servers python -m market_data``."""
 
 from market_data.server import main
 
