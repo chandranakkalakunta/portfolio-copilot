@@ -1,4 +1,4 @@
-"""Minimal FastAPI hello service with health / ready / version (O31) + /me (F58)."""
+"""Portfolio Copilot API — health (O31), /me (F58), domain routes (2.5)."""
 
 from __future__ import annotations
 
@@ -10,7 +10,8 @@ from typing import Annotated, TypedDict
 
 from fastapi import Depends, FastAPI
 
-from api.deps import _build_auth_port, get_current_user
+from api.deps import get_current_user, wire_app_state
+from api.routers import analyze, portfolios, positions, profile
 from core.ports.auth import AuthenticatedUser
 
 STARTED_AT: str = datetime.now(UTC).isoformat()
@@ -21,12 +22,16 @@ deployed_at: str = _DEPLOY_TIME if _DEPLOY_TIME else STARTED_AT
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Wire AuthPort at startup (Fake by default; Firebase when configured)."""
-    app.state.auth_port = _build_auth_port()
+    """Wire auth, repos, and analysis engine at startup (config-selected)."""
+    wire_app_state(app)
     yield
 
 
 app = FastAPI(title="portfolio-copilot", lifespan=lifespan)
+app.include_router(profile.router)
+app.include_router(portfolios.router)
+app.include_router(positions.router)
+app.include_router(analyze.router)
 
 
 class RootResponse(TypedDict):
