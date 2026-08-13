@@ -24,6 +24,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | F5 / F6 | Manual holdings / profile store (StatePort) | Phase 2.2 | In progress | Domain + Firestore + in-memory repos; security rules / indexes later |
 | F58 | Google Sign-In (backend ID-token verification) | Phase 2.3 | ✓ Backend done | AuthPort + Firebase adapter + `/me`; Google provider/OAuth-client console + real-token e2e in 2.6 |
 | F17 / F25 / F26 / F27 | Cited fundamental note (disclaimer + as-of sources) | Phase 2.4 | In progress | ADK → market-data MCP HTTP; full multi-agent verdict + portfolio-fit = Phase 4 |
+| F1 / F5 / F6 / F17 | Auth-protected HTTP API (profile/portfolio/positions/analyze) | Phase 2.5 | In progress | FastAPI + FakeAuth/memory hermetic; live analyze via ADK+MCP |
 
 ## AI
 
