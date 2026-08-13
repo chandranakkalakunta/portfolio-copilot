@@ -29,7 +29,18 @@ _DEPLOY_TIME: str | None = os.environ.get("DEPLOY_TIME")
 deployed_at: str = _DEPLOY_TIME if _DEPLOY_TIME else STARTED_AT
 
 mcp = MCPServer("market-data")
-_provider = MarketDataProvider()
+_provider: MarketDataProvider = MarketDataProvider()
+
+
+def get_provider() -> MarketDataProvider:
+    """Return the active market-data provider (swappable for tests)."""
+    return _provider
+
+
+def set_provider(provider: MarketDataProvider) -> None:
+    """Replace the active provider (integration tests inject a fake)."""
+    global _provider
+    _provider = provider
 
 
 def health_payload() -> dict[str, str]:
@@ -51,13 +62,13 @@ async def health_check(_request: Request) -> Response:
 @mcp.tool()
 def get_quote(ticker: str) -> dict[str, Any]:
     """Get the latest stock quote for a ticker (price, currency, as_of)."""
-    return _provider.fetch_quote(ticker)
+    return get_provider().fetch_quote(ticker)
 
 
 @mcp.tool()
 def get_fundamentals(ticker: str) -> dict[str, Any]:
     """Get curated fundamentals for a ticker (market_cap, P/E, margin, as_of)."""
-    return _provider.fetch_fundamentals(ticker)
+    return get_provider().fetch_fundamentals(ticker)
 
 
 def main() -> None:

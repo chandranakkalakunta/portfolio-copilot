@@ -45,6 +45,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | O6 | IaC baseline | Phase 0.3–2.3.1 | Partial → progress | WIF, AR, roles, CD; 2.3.1 APIs + Firestore in TF; rules/indexes + full multi-env later |
 | O31 | Verifiable deploys | Phase 0.3.2–0.3.3 | ✓ Done | PR #8, #9 |
 | O10 | Security / dep scanning + coverage | Phase 2.3.2 | In progress | pip-audit, gitleaks, coverage fail-under 65% (ratchet up over time); SHA-pin actions → Phase 9 |
+| O8 / O11 | Integration tests (emulator + HTTP) | Phase 2.3.3 | In progress | Firestore emulator + MCP HTTP fake-provider suites; dedicated CI job |
 
 ## Infrastructure & Technical
 

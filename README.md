@@ -50,9 +50,30 @@ docker-compose.yml  # local services (market-data MCP)
 ```
 uv sync                                   # install toolchain + deps
 uv run ruff check . && uv run mypy core api adapters mcp_servers tests
-uv run pytest --cov                       # unit tests + coverage
+uv run pytest -m "not integration" --cov  # unit tests + coverage (default CI unit job)
 docker compose up market-data-mcp --build # run the market-data MCP (HTTP :8081)
 ```
+
+### Integration tests
+
+Marked `@pytest.mark.integration` (excluded from default unit runs):
+
+1. **Firestore emulator** — install Java + Cloud SDK Firestore emulator, then:
+
+   ```bash
+   # Terminal A
+   gcloud emulators firestore start --host-port=127.0.0.1:8080
+
+   # Terminal B
+   export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+   uv run pytest -m integration -q
+   ```
+
+   If `FIRESTORE_EMULATOR_HOST` is unset, Firestore integration tests **skip** (safe without emulator).
+
+2. **MCP HTTP** — no external network; starts an in-process HTTP server with a **fake** market-data provider (no yfinance). Included in `pytest -m integration`.
+
+CI runs integration in a dedicated job (emulator + `pytest -m integration`).
 
 Environment setup for a fresh GCP project is documented in `docs/runbooks/environment-setup.md` (bootstrap + `terraform apply`; only the OAuth consent screen / Web client is a manual step).
 

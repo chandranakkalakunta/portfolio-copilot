@@ -31,6 +31,15 @@ dev = [
 line-length = 100
 target-version = "py312"
 
+[tool.ruff.lint.isort]
+# Treat local packages as first-party; PyPI `mcp` stays third-party.
+known-first-party = ["core", "api", "adapters", "market_data", "tests"]
+known-third-party = ["mcp"]
+
+[tool.ruff.lint.per-file-ignores]
+# Scripts rewrite sys.path before imports; isort sectioning disagrees across environments.
+"scripts/**.py" = ["I001"]
+
 [tool.mypy]
 strict = true
 python_version = "3.12"
@@ -65,6 +74,9 @@ testpaths = ["tests"]
 # ``mcp_servers/`` holds local MCP apps; import package remains ``market_data``.
 # Named to avoid shadowing the official PyPI ``mcp`` SDK.
 pythonpath = [".", "mcp_servers"]
+markers = [
+    "integration: needs emulator/local server (excluded from default unit run)",
+]
 
 [tool.coverage.run]
 source = ["core", "api", "adapters", "mcp_servers"]

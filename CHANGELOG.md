@@ -25,3 +25,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phase 2.2.1: market-data MCP over HTTP (ADR-0015) + Dockerfile + /health + compose
 - Phase 2.3.1: codify APIs + Firestore in Terraform; environment-setup runbook
 - Phase 2.3.2: CI hardening — pip-audit, gitleaks, coverage gate (65%)
+- Phase 2.3.3: integration tests — Firestore emulator + MCP HTTP (O8/O11)
