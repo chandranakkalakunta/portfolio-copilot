@@ -8,13 +8,27 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+DEFAULT_DISCLAIMER = (
+    "Not investment advice. All outputs are informational; the user is solely "
+    "responsible for their own due diligence and decisions. Display-only — "
+    "never executes real trades."
+)
 
 
 class AnalysisRequest(BaseModel):
     """Input to a framework adapter analysis run."""
 
     ticker: str
+
+
+class Citation(BaseModel):
+    """Attribution for a figure used in the analysis (source + as-of)."""
+
+    source: str
+    as_of: str
+    detail: str
 
 
 class AnalysisResult(BaseModel):
@@ -24,6 +38,10 @@ class AnalysisResult(BaseModel):
     summary: str
     tool_calls: list[str]
     framework: str
+    citations: list[Citation] = Field(default_factory=list)
+    disclaimer: str = DEFAULT_DISCLAIMER
+    # Skeleton label; full trim/add/hold/sell + portfolio-fit arrive in Phase 4.
+    rating: str = "informational"
 
 
 class AgentFrameworkPort(Protocol):
