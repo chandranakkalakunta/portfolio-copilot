@@ -28,3 +28,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phase 2.3.3: integration tests — Firestore emulator + MCP HTTP (O8/O11)
 - Phase 2.4: fundamental agent → market-data MCP (HTTP) → cited note (F17/F25/F26/F27)
 - Phase 2.5: auth-protected API (profile/portfolio/positions/analyze)
+- Phase 2.6: minimal UI + real Google Sign-In; real-token e2e

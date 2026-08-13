@@ -19,10 +19,12 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 
 | ID | Item | Phase | Status | Notes |
 |----|------|-------|--------|-------|
-| — | Web framework choice | Phase 6 | Deferred | UI stack; API uses FastAPI (ADR-0014) |
+| — | Web framework choice | Phase 6 | Deferred | UI stack; 2.6 is vanilla HTML/JS served by FastAPI. API uses FastAPI (ADR-0014) |
 | F55 | No cloud SDK in core | Phase 0.1 | ✓ Done | Guard test + ADR-0001 |
 | F5 / F6 | Manual holdings / profile store (StatePort) | Phase 2.2 | In progress | Domain + Firestore + in-memory repos; security rules / indexes later |
-| F58 | Google Sign-In (backend ID-token verification) | Phase 2.3 | ✓ Backend done | AuthPort + Firebase adapter + `/me`; Google provider/OAuth-client console + real-token e2e in 2.6 |
+| F58 | Google Sign-In (backend + real-token e2e) | Phase 2.3–2.6 | ✓ Done | AuthPort + Firebase adapter + `/me` + vanilla UI `signInWithPopup`; Coordinator browser e2e |
+| F45 | Minimal dashboard / UI skeleton | Phase 2.6 | Skeleton | `web/index.html` + `web/app.js` (sign-in, holding form, analyze); full dashboard = Phase 6 |
+| F46 | Attribution + disclaimer on AI output | Phase 2.6 | Skeleton | Cited note renders summary, citations (`as_of`), disclaimer banner; full product surface = Phase 6 |
 | F17 / F25 / F26 / F27 | Cited fundamental note (disclaimer + as-of sources) | Phase 2.4 | In progress | ADK → market-data MCP HTTP; full multi-agent verdict + portfolio-fit = Phase 4 |
 | F1 / F5 / F6 / F17 | Auth-protected HTTP API (profile/portfolio/positions/analyze) | Phase 2.5 | In progress | FastAPI + FakeAuth/memory hermetic; live analyze via ADK+MCP |
 
@@ -57,7 +59,8 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Terraform state bucket created imperatively (bootstrap); consider `terraform import` later. | 0.2.x | Open | `gs://pcopilot-dev-tfstate` |
 | Tighten WIF trust to specific branch/GitHub environment in 0.3 (currently repo-scoped). | 0.3 | Open | Currently `assertion.repository` only |
 | Firestore security rules + composite indexes for portfolio queries | Phase 2.x | Open | After StatePort baseline (2.2) |
-| Identity Platform Google-provider + OAuth client (console) | Phase 2.6 | Open | Residual manual OAuth; real-token e2e with UI |
+| Identity Platform Google-provider + OAuth client (console) | Phase 2.6 | Residual | UI + `/config` shipped; consent screen / Web client / authorized origin `http://localhost:8000` remain console-only |
+| GET foreign portfolio returns 403 (leaks existence) → 404 | Phase 2.x | Open | Privacy: treat other-user resources as not found; 2.5 returns 403 `not portfolio owner` |
 
 ## Deferred (seeded)
 

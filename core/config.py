@@ -28,3 +28,20 @@ class MCPSettings(BaseSettings):
 
     # Streamable-HTTP MCP path on the market-data service.
     market_data_mcp_url: str = "http://localhost:8081/mcp"
+
+
+class FirebaseWebSettings(BaseSettings):
+    """Public Firebase web client config (browser-safe apiKey). Never hardcode.
+
+    Env: ``PCOPILOT_FIREBASE_API_KEY``, ``PCOPILOT_FIREBASE_AUTH_DOMAIN``,
+    ``PCOPILOT_FIREBASE_PROJECT_ID``.
+    """
+
+    model_config = SettingsConfigDict(env_prefix="PCOPILOT_FIREBASE_")
+
+    api_key: str = ""
+    auth_domain: str = ""
+    project_id: str = ""
+
+    def is_complete(self) -> bool:
+        return bool(self.api_key and self.auth_domain and self.project_id)

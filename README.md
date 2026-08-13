@@ -10,7 +10,7 @@ Actively building. **Phase 0 (foundations)** and **Phase 1 (framework spike)** a
 
 - **Phase 0 — Foundations ✓** — monorepo + pinned toolchain (Python 3.12 / uv), CI (lint/type/test), keyless CI→GCP via Workload Identity Federation, Terraform-managed infra, and a verifiable `hello` service deployed to Cloud Run.
 - **Phase 1 — Framework spike ✓** — same agent slice built in both ADK and LangGraph against Vertex Gemini; **ADK selected as primary**, LangGraph retained as portability proof (ADR-0012, `docs/design/framework-spike-comparison.md`).
-- **Phase 2 — Walking skeleton (in progress)** — done: market-data MCP HTTP microservice (yfinance), Firestore portfolio/profile domain, backend Google/Firebase token verification, CI hardening (coverage + dependency + secret scanning). Remaining: agent↔MCP wiring for a cited note, minimal UI, and slice deploy.
+- **Phase 2 — Walking skeleton (in progress)** — done: market-data MCP HTTP microservice (yfinance), Firestore portfolio/profile domain, backend Google/Firebase token verification, cited fundamental note, auth-protected API, **minimal UI + Google Sign-In** (vanilla HTML/JS). Remaining: slice deploy to staging.
 
 ## Tech stack
 
@@ -36,7 +36,8 @@ adapters/      # provider/cloud implementations of the ports
   firebase_auth/  fake_auth/  # auth adapters
 mcp_servers/   # MCP HTTP microservices
   market_data/ #   yfinance: get_quote / get_fundamentals, /health
-api/           # FastAPI app ( /, /health, /me )
+api/           # FastAPI app ( /health, /me, /config, domain routes; serves web/ at / )
+web/           # Vanilla HTML/JS UI (Firebase Auth Google Sign-In; framework = Phase 6)
 infra/         # Terraform (WIF, Artifact Registry, service accounts, IAM, APIs, Firestore)
 scripts/       # live-smoke scripts
 tests/         # hermetic tests
@@ -52,6 +53,17 @@ uv sync                                   # install toolchain + deps
 uv run ruff check . && uv run mypy core api adapters mcp_servers tests
 uv run pytest -m "not integration" --cov  # unit tests + coverage (default CI unit job)
 docker compose up market-data-mcp --build # run the market-data MCP (HTTP :8081)
+
+# Real-token UI (Google Sign-In popup). Requires Identity Platform Web client
+# + authorized JavaScript origin http://localhost:8000 (console).
+# Copy .env.example → .env and fill PCOPILOT_FIREBASE_*.
+PCOPILOT_AUTH_BACKEND=firebase \
+PCOPILOT_REPO_BACKEND=firestore \
+PCOPILOT_FIREBASE_API_KEY=... \
+PCOPILOT_FIREBASE_AUTH_DOMAIN=... \
+PCOPILOT_FIREBASE_PROJECT_ID=... \
+uv run uvicorn api.main:app --reload --port 8000
+# open http://localhost:8000
 ```
 
 ### Integration tests
