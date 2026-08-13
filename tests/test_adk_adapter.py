@@ -6,8 +6,8 @@ import asyncio
 from typing import Any
 from unittest.mock import AsyncMock, patch
 
-from adapters.agent_adk.engine import AdkAnalysisEngine, get_quote
-from core.config import LLMSettings
+from adapters.agent_adk.engine import AdkAnalysisEngine
+from core.config import LLMSettings, MCPSettings
 from core.ports.agent_framework import AgentFrameworkPort, AnalysisRequest, AnalysisResult
 
 
@@ -15,15 +15,10 @@ def test_adk_engine_is_agent_framework_port() -> None:
     """Structural: AdkAnalysisEngine satisfies AgentFrameworkPort (type-level)."""
     engine: AgentFrameworkPort = AdkAnalysisEngine(
         settings=LLMSettings(gemini_model="test-model"),
+        mcp_settings=MCPSettings(market_data_mcp_url="http://localhost:9/mcp"),
+        mcp_call=AsyncMock(return_value={}),
     )
     assert callable(engine.analyze)
-
-
-def test_get_quote_tool_wrapper_returns_dict() -> None:
-    payload = get_quote("aapl")
-    assert payload["ticker"] == "AAPL"
-    assert payload["price"] == 232.10
-    assert payload["currency"] == "USD"
 
 
 def test_analyze_with_monkeypatched_runner() -> None:
@@ -42,24 +37,40 @@ def test_analyze_with_monkeypatched_runner() -> None:
             self.parts = parts
 
     class _FakeEvent:
-        def __init__(self, parts: list[_FakePart]) -> None:
+        def __init__(self, parts: list[_FakePart], *, calls: list[Any] | None = None) -> None:
             self.content = _FakeContent(parts)
+            self._calls = calls or []
 
-        def get_function_calls(self) -> list[_FakeFc]:
-            return [_FakeFc() for p in self.content.parts if p.function_call]
+        def get_function_calls(self) -> list[Any]:
+            return list(self._calls)
+
+        def get_function_responses(self) -> list[Any]:
+            return []
 
     fake_events = [
-        _FakeEvent([_FakePart(function_call=_FakeFc())]),
+        _FakeEvent([], calls=[_FakeFc()]),
         _FakeEvent(
             [
                 _FakePart(
-                    text="AAPL trades at 232.10 USD based on the stub quote.",
+                    text="AAPL trades at 232.10 USD based on the market-data quote.",
                 )
             ]
         ),
     ]
 
-    engine = AdkAnalysisEngine(settings=LLMSettings(gemini_model="test-model"))
+    async def _mcp(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "ticker": "AAPL",
+            "price": 232.10,
+            "currency": "USD",
+            "as_of": "2024-01-01T00:00:00+00:00",
+        }
+
+    engine = AdkAnalysisEngine(
+        settings=LLMSettings(gemini_model="test-model"),
+        mcp_settings=MCPSettings(market_data_mcp_url="http://localhost:9/mcp"),
+        mcp_call=_mcp,
+    )
     with patch.object(
         engine._runner,
         "run_debug",
