@@ -35,3 +35,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phase 2.7.3: lazy heavy imports (fast cold start) + MCP service-to-service ID-token auth
 - Phase 2.7.4: deploy API (public) + market-data MCP (private) as two Cloud Run services on push to main; MCP-first URL wiring; cpu-boost + timeout 300 + min-instances 0; real firebase/firestore/adk config; grant gh-deployer roles/run.admin so api can be deployed public (setIamPolicy for allUsers)
 - docs: Phase 2 doc-hygiene — reconcile backlog/STATUS with applied IAM + 2.7.4 deploy; Phase 2 complete
+- docs: establish doc baseline (§7.9) — phase-closure reports 0–2, README refresh, learnings 0001–0005
