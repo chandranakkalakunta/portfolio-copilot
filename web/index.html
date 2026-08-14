@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio Copilot</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f1ea;
+        --ink: #1b1b18;
+        --muted: #5c5a52;
+        --card: #fffcf6;
+        --line: #d9d4c8;
+        --accent: #1f4d3a;
+        --accent-ink: #f4f1ea;
+        --warn-bg: #f3e2b3;
+        --warn-ink: #3d2e00;
+        --err: #8b1e1e;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      header {
+        padding: 1.25rem 1.5rem 0.75rem;
+        border-bottom: 1px solid var(--line);
+      }
+      h1 { margin: 0 0 0.35rem; font-size: 1.55rem; letter-spacing: -0.02em; }
+      h2 { margin: 0 0 0.75rem; font-size: 1.1rem; }
+      .lede { margin: 0; color: var(--muted); font-size: 0.95rem; }
+      .disclaimer {
+        display: block;
+        margin: 0.85rem 0 0;
+        padding: 0.7rem 0.85rem;
+        background: var(--warn-bg);
+        color: var(--warn-ink);
+        font-weight: 600;
+        font-size: 0.92rem;
+      }
+      main { padding: 1.25rem 1.5rem 2.5rem; max-width: 52rem; }
+      section {
+        background: var(--card);
+        border: 1px solid var(--line);
+        padding: 1rem 1.1rem 1.15rem;
+        margin: 0 0 1rem;
+      }
+      label { display: block; font-size: 0.85rem; color: var(--muted); margin: 0.45rem 0 0.2rem; }
+      input, select, button, textarea {
+        font: inherit;
+        font-size: 1rem;
+      }
+      input, select {
+        width: 100%;
+        padding: 0.45rem 0.5rem;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+      @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+      button {
+        margin-top: 0.85rem;
+        padding: 0.5rem 0.9rem;
+        border: 0;
+        background: var(--accent);
+        color: var(--accent-ink);
+        cursor: pointer;
+      }
+      button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); margin-left: 0.4rem; }
+      .user-bar { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+      .user-bar button { margin-top: 0; }
+      .error { color: var(--err); margin: 0.5rem 0 0; white-space: pre-wrap; }
+      .ok { color: var(--accent); margin: 0.5rem 0 0; }
+      .note-summary { white-space: pre-wrap; }
+      .citations { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.6rem; }
+      .citations th, .citations td { text-align: left; vertical-align: top; padding: 0.35rem 0.4rem; border-bottom: 1px solid var(--line); }
+      .hidden { display: none; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Portfolio Copilot</h1>
+      <p class="lede">Minimal walking-skeleton UI. Framework choice is Phase 6.</p>
+      <p class="disclaimer" role="note">
+        Not investment advice. All outputs are informational; you are solely responsible
+        for your own due diligence and decisions. Display-only — never executes real trades.
+      </p>
+    </header>
+    <main>
+      <p id="boot-error" class="error hidden"></p>
+
+      <section id="signed-out">
+        <h2>Sign in</h2>
+        <p>Google Sign-In via Firebase Auth. The API receives a real ID token.</p>
+        <button id="signin" type="button">Sign in with Google</button>
+        <p id="auth-error" class="error hidden"></p>
+      </section>
+
+      <div id="signed-in" class="hidden">
+        <section>
+          <div class="user-bar">
+            <div>
+              <h2>Signed in</h2>
+              <p id="user-line" class="lede"></p>
+            </div>
+            <button id="signout" class="secondary" type="button">Sign out</button>
+          </div>
+        </section>
+
+        <section>
+          <h2>Create a portfolio and add a holding</h2>
+          <form id="holding-form">
+            <div class="row">
+              <div>
+                <label for="pf-type">Portfolio type</label>
+                <select id="pf-type" name="type">
+                  <option value="paper" selected>paper</option>
+                  <option value="real">real</option>
+                </select>
+              </div>
+              <div>
+                <label for="pf-market">Market</label>
+                <select id="pf-market" name="market">
+                  <option value="US" selected>US</option>
+                  <option value="IN">IN</option>
+                </select>
+              </div>
+            </div>
+            <label for="pf-cash">Cash</label>
+            <input id="pf-cash" name="cash" type="number" step="0.01" value="0" />
+            <div class="row">
+              <div>
+                <label for="pos-ticker">Ticker</label>
+                <input id="pos-ticker" name="ticker" required maxlength="16" placeholder="AAPL" />
+              </div>
+              <div>
+                <label for="pos-qty">Quantity</label>
+                <input id="pos-qty" name="quantity" type="number" step="any" required />
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="pos-cost">Cost basis (per share)</label>
+                <input id="pos-cost" name="cost_basis" type="number" step="0.01" required />
+              </div>
+              <div>
+                <label for="pos-date">Acquired</label>
+                <input id="pos-date" name="acquired" type="date" required />
+              </div>
+            </div>
+            <button type="submit">Save holding</button>
+            <p id="holding-msg" class="ok hidden"></p>
+            <p id="holding-error" class="error hidden"></p>
+          </form>
+        </section>
+
+        <section>
+          <h2>Analyze ticker</h2>
+          <form id="analyze-form">
+            <label for="analyze-ticker">Ticker</label>
+            <input id="analyze-ticker" name="ticker" required maxlength="16" placeholder="AAPL" />
+            <button type="submit">Analyze</button>
+            <p id="analyze-error" class="error hidden"></p>
+          </form>
+          <div id="note" class="hidden">
+            <h2 id="note-title"></h2>
+            <p id="note-summary" class="note-summary"></p>
+            <p id="note-rating" class="lede"></p>
+            <table class="citations">
+              <thead>
+                <tr>
+                  <th>Source</th>
+                  <th>As of</th>
+                  <th>Detail</th>
+                </tr>
+              </thead>
+              <tbody id="note-citations"></tbody>
+            </table>
+            <p class="disclaimer" id="note-disclaimer"></p>
+          </div>
+        </section>
+      </div>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

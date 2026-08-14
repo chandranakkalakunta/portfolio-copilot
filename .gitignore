@@ -1,6 +1,11 @@
 # Local Claude session staging (do not commit)
 claude-working/
 
+# Local secrets / run config (commit .env.example instead)
+.env
+.env.*
+!.env.example
+
 # Python / tooling
 __pycache__/
 *.py[cod]

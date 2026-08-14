@@ -40,9 +40,21 @@ Identity Platform / Firebase Auth needs a **Web OAuth client** and **OAuth conse
 
 1. **OAuth consent screen** (APIs & Services → OAuth consent screen): external or internal; app name; support email; authorized domains if needed.
 2. **Web OAuth client** (APIs & Services → Credentials → Create credentials → OAuth client ID → Web application): authorized JavaScript origins + redirect URIs for the app (local + Cloud Run URLs).
-3. Wire the client into **Identity Platform / Firebase Auth** Google provider (Phase **2.6** — browser sign-in + real-token e2e).
+3. Wire the client into **Identity Platform / Firebase Auth** Google provider.
+4. Authorized **JavaScript origin** for local e2e: `http://localhost:8000` (and the Cloud Run origin when deployed). Redirect URI is the Firebase handler (`https://<project>.firebaseapp.com/__/auth/handler`).
+5. Export the public web client values (browser-safe; not service-account secrets):
 
-Until 2.6, the backend AuthPort can verify ID tokens once a client issues them; the UI OAuth flow is separate.
+   ```bash
+   export PCOPILOT_FIREBASE_API_KEY="..."
+   export PCOPILOT_FIREBASE_AUTH_DOMAIN="<project>.firebaseapp.com"
+   export PCOPILOT_FIREBASE_PROJECT_ID="<project>"
+   export PCOPILOT_AUTH_BACKEND=firebase
+   export PCOPILOT_REPO_BACKEND=firestore
+   ```
+
+   The API exposes these via `GET /config` for the vanilla UI (`web/`). Never hardcode them.
+
+The backend AuthPort verifies ID tokens; the UI (`signInWithPopup`) is the real-token e2e path (Phase 2.6).
 
 ## Everything else: Terraform
 
