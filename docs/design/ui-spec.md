@@ -2,7 +2,7 @@
 
 **Document:** UI/UX Spec (living) · **Version:** 0.1 · **Status:** Active
 **Owner:** Strategist (design lead) · **Location on merge:** `docs/design/ui-spec.md`
-**Reference mockup:** `docs/design/ui-mockups/portfolio-overview.html`
+**Reference mockup:** `docs/design/ui-mockups/portfolio-overview.png`
 
 > Living document. **v0 (now)** fixes the design language, information architecture, tokens, and invariants so every phase's UI increment is consistent. It **deepens toward Phase 6** (full dashboard, PWA, WCAG 2.1 AA, framework choice) with per-screen wireframes once the data those screens show exists. It does not pre-spec visuals for features not yet built.
 
