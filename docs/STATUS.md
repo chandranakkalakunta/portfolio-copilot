@@ -6,8 +6,8 @@
 ## How to resume in a fresh conversation (protocol §6.1)
 
 Provide the new Strategist:
-1. **Multi-Agent Engineering Protocol v4.2** (`chandra-prompts` repo).
-2. **This repo** — the source of truth: `docs/requirements` (v0.4), `docs/architecture` (v0.1), `docs/adr` (0001–0015), `docs/implementation` (roadmap), `docs/backlog.md`, `CHANGELOG.md`, and this file.
+1. **Multi-Agent Engineering Protocol v4.3** (`chandra-prompts` repo).
+2. **This repo** — the source of truth: `docs/requirements` (v0.4), `docs/architecture` (v0.1), `docs/adr` (0001–0015), `docs/implementation` (roadmap), `docs/backlog.md`, `docs/phase-closure/`, `docs/learnings/`, `CHANGELOG.md`, and this file.
 3. The line: **"Phase 2 complete — ready to begin Phase 3."**
 
 Worker = Grok CLI. One sub-phase per PR; pre-flight requires **no open PRs** (§0.1 #15). Phase-end **doc-hygiene** is mandatory (§7.8).

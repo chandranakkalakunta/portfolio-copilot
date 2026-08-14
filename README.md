@@ -6,11 +6,13 @@ An AI equity-research analyst that knows your portfolio. Built on an agentic fra
 
 ## Status
 
-Actively building. **Phase 0 (foundations)** and **Phase 1 (framework spike)** are complete; **Phase 2 (walking skeleton)** is in progress.
+**Phase 2 (walking skeleton) is complete** and deployed to staging. Next is **Phase 3** (valuation, performance, recommendation logging).
 
-- **Phase 0 — Foundations ✓** — monorepo + pinned toolchain (Python 3.12 / uv), CI (lint/type/test), keyless CI→GCP via Workload Identity Federation, Terraform-managed infra, and a verifiable `hello` service deployed to Cloud Run.
-- **Phase 1 — Framework spike ✓** — same agent slice built in both ADK and LangGraph against Vertex Gemini; **ADK selected as primary**, LangGraph retained as portability proof (ADR-0012, `docs/design/framework-spike-comparison.md`).
-- **Phase 2 — Walking skeleton (in progress)** — done: market-data MCP HTTP microservice (yfinance), Firestore portfolio/profile domain, backend Google/Firebase token verification, cited fundamental note, auth-protected API, **minimal UI + Google Sign-In** (vanilla HTML/JS). Remaining: slice deploy to staging.
+- **Phase 0 — Foundations ✓** — monorepo + pinned toolchain (Python 3.12 / uv), CI (lint/type/test), keyless CI→GCP via Workload Identity Federation, Terraform-managed infra.
+- **Phase 1 — Framework spike ✓** — same agent slice in ADK and LangGraph against Vertex Gemini; **ADK selected as primary**, LangGraph retained (ADR-0012).
+- **Phase 2 — Walking skeleton ✓** — market-data MCP (HTTP), Firestore domain, Google Sign-In, cited fundamental note, auth-protected API, vanilla UI, two Cloud Run services in `pcopilot-dev`.
+
+**Live API (dev):** https://api-552451662981.asia-south1.run.app
 
 ## Tech stack
 
@@ -19,7 +21,7 @@ Actively building. **Phase 0 (foundations)** and **Phase 1 (framework spike)** a
 - **Agents:** Google ADK (primary) + LangGraph (retained) behind `AgentFrameworkPort`; Vertex AI Gemini (`gemini-2.5-flash`), keyless.
 - **Tools:** MCP servers as HTTP microservices (ADR-0015).
 - **Data:** Firestore (state) + BigQuery (analytical, later) behind ports (ADR-0004).
-- **Cloud/CI:** GCP (Cloud Run, Artifact Registry, Secret Manager) now, cloud-agnostic via ports-and-adapters (ADR-0001); Terraform; keyless WIF deploys.
+- **Cloud/CI:** GCP (Cloud Run, Artifact Registry, Secret Manager); Terraform; keyless WIF deploys.
 
 ## Repository layout
 
@@ -41,30 +43,46 @@ web/           # Vanilla HTML/JS UI (Firebase Auth Google Sign-In; framework = P
 infra/         # Terraform (WIF, Artifact Registry, service accounts, IAM, APIs, Firestore)
 scripts/       # live-smoke scripts
 tests/         # hermetic tests
-docs/          # product, requirements, architecture, implementation, design, adr, runbooks
-.github/workflows/  # ci.yml (lint/type/test/coverage/scan) + deploy-dev.yml (keyless), gcp-auth-check.yml
-docker-compose.yml  # local services (market-data MCP)
+docs/          # product, requirements, architecture, implementation, design, adr, runbooks, phase-closure, learnings
+.github/workflows/  # ci.yml + deploy-dev.yml (keyless) + gcp-auth-check.yml
+docker-compose.yml  # local market-data MCP
 ```
 
 ## Development
+
+`uv run` for tests uses `pythonpath` from `pyproject.toml` (`.` and `mcp_servers/`). For `uvicorn`, set `PYTHONPATH=.` from the repo root.
 
 ```
 uv sync                                   # install toolchain + deps
 uv run ruff check . && uv run mypy core api adapters mcp_servers tests
 uv run pytest -m "not integration" --cov  # unit tests + coverage (default CI unit job)
-docker compose up market-data-mcp --build # run the market-data MCP (HTTP :8081)
+docker compose up market-data-mcp --build # market-data MCP on http://localhost:8081
+```
 
-# Real-token UI (Google Sign-In popup). Requires Identity Platform Web client
-# + authorized JavaScript origin http://localhost:8000 (console).
+Backend switches (see `.env.example`):
+
+| Variable | Values | Default |
+|---|---|---|
+| `PCOPILOT_AUTH_BACKEND` | `fake` \| `firebase` | `fake` |
+| `PCOPILOT_REPO_BACKEND` | `memory` \| `firestore` | `memory` |
+| `PCOPILOT_ANALYSIS_BACKEND` | `adk` \| `fake` | `adk` |
+
+Local API + real Google Sign-In (authorized JS origin `http://localhost:8000`):
+
+```
 # Copy .env.example → .env and fill PCOPILOT_FIREBASE_*.
 PCOPILOT_AUTH_BACKEND=firebase \
 PCOPILOT_REPO_BACKEND=firestore \
+PCOPILOT_ANALYSIS_BACKEND=adk \
+PCOPILOT_MARKET_DATA_MCP_URL=http://localhost:8081/mcp \
 PCOPILOT_FIREBASE_API_KEY=... \
 PCOPILOT_FIREBASE_AUTH_DOMAIN=... \
 PCOPILOT_FIREBASE_PROJECT_ID=... \
-uv run uvicorn api.main:app --reload --port 8000
+PYTHONPATH=. uv run uvicorn api.main:app --reload --port 8000
 # open http://localhost:8000
 ```
+
+After `gcloud auth application-default login`, **fully restart** the API process. `--reload` does not pick up new ADC (see [learning 0005](docs/learnings/0005-adc-restart-required.md)).
 
 ### Integration tests
 
@@ -81,35 +99,52 @@ Marked `@pytest.mark.integration` (excluded from default unit runs):
    uv run pytest -m integration -q
    ```
 
-   If `FIRESTORE_EMULATOR_HOST` is unset, Firestore integration tests **skip** (safe without emulator).
+   If `FIRESTORE_EMULATOR_HOST` is unset, Firestore integration tests **skip**.
 
-2. **MCP HTTP** — no external network; starts an in-process HTTP server with a **fake** market-data provider (no yfinance). Included in `pytest -m integration`.
+2. **MCP HTTP** — in-process HTTP server with a **fake** market-data provider (no yfinance). Included in `pytest -m integration`.
 
 CI runs integration in a dedicated job (emulator + `pytest -m integration`).
 
-Environment setup for a fresh GCP project is documented in `docs/runbooks/environment-setup.md` (bootstrap + `terraform apply`; only the OAuth consent screen / Web client is a manual step).
+Environment setup for a fresh GCP project: `docs/runbooks/environment-setup.md`.
+
+## Deploy
+
+Push to `main` (or `workflow_dispatch`) runs [`.github/workflows/deploy-dev.yml`](.github/workflows/deploy-dev.yml):
+
+1. Build + push **market-data-mcp** → Cloud Run **private** (`mcp-run` SA).
+2. Capture `status.url`, then build + push **api** → Cloud Run **public** (`run-app` SA) with `PCOPILOT_MARKET_DATA_MCP_URL=<mcp-url>/mcp` (https ⇒ ID-token auth, 2.7.3).
+3. Smoke `GET /health` and `GET /config`.
+
+Region: `asia-south1`. Images: `asia-south1-docker.pkg.dev/pcopilot-dev/containers/{api,market-data-mcp}`.
 
 ## Documentation
 
 ```
 docs/
 ├── STATUS.md         # Current phase / handoff (resume here)
-├── product/          # One-Pager (vision, positioning)
-├── requirements/     # Detailed PRD (functional + non-functional + operational)
-├── architecture/     # Technical architecture (C4, agents, MCP, data, deployment)
-├── implementation/   # Phased build roadmap
-├── design/           # Design notes (e.g., framework-spike comparison)
-├── runbooks/         # Operational runbooks (environment setup, ...)
-└── adr/              # Architecture Decision Records + index
+├── backlog.md        # F/A/O traceability
+├── phase-closure/    # Per-phase closure reports (§7.9)
+├── learnings/        # Numbered learnings (ADR-style)
+├── product/          # One-Pager
+├── requirements/     # PRD
+├── architecture/     # Technical architecture
+├── implementation/   # Phased roadmap
+├── design/           # Design notes
+├── runbooks/         # Operational runbooks
+└── adr/              # ADRs
 ```
 
 | Document | Description |
 |---|---|
+| [STATUS](docs/STATUS.md) | Phase handoff — start here in a new conversation |
+| [Backlog](docs/backlog.md) | Requirement / infra traceability |
+| [Phase closure](docs/phase-closure/) | Closure reports for Phases 0–2 |
+| [Learnings](docs/learnings/) | Numbered lessons (0001–0005) |
 | [One-Pager](docs/product/Portfolio-Copilot-One-Pager.md) | Problem, concept, agent architecture, stack, guardrails |
-| [Requirements](docs/requirements/Portfolio-Copilot-Requirements.md) | Detailed PRD — goals, use cases, FRs/NFRs + operational/platform requirements (draft v0.4) |
-| [Architecture](docs/architecture/Portfolio-Copilot-Architecture.md) | Technical architecture — C4, agents, MCP, data, deployment (draft v0.1) |
-| [Implementation Phases](docs/implementation/Portfolio-Copilot-Implementation-Phases.md) | Phased, PR-gated build roadmap (draft v0.1) |
-| [ADRs](docs/adr/README.md) | Architecture Decision Records 0001–0015 (0012 accepted: ADK primary) |
-| [Design: framework spike](docs/design/framework-spike-comparison.md) | ADK vs LangGraph head-to-head and decision |
+| [Requirements](docs/requirements/Portfolio-Copilot-Requirements.md) | PRD (draft v0.4) |
+| [Architecture](docs/architecture/Portfolio-Copilot-Architecture.md) | C4, agents, MCP, data, deployment (draft v0.1) |
+| [Implementation Phases](docs/implementation/Portfolio-Copilot-Implementation-Phases.md) | Phased, PR-gated roadmap (draft v0.1) |
+| [ADRs](docs/adr/README.md) | ADRs 0001–0015 (0012 accepted: ADK primary) |
+| [Design: framework spike](docs/design/framework-spike-comparison.md) | ADK vs LangGraph head-to-head |
 
-Engineering methodology: **Multi-Agent Engineering Protocol v4.1** (`chandra-prompts` repo) — Strategist / Coordinator / Worker / Reviewer, PR-gated, one sub-phase per PR.
+Engineering methodology: **Multi-Agent Engineering Protocol v4.3** (`chandra-prompts` repo) — Strategist / Coordinator / Worker / Reviewer, PR-gated, one sub-phase per PR; phase-closure + learnings per §7.9.
