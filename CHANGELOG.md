@@ -31,3 +31,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Phase 2.6: minimal UI + real Google Sign-In; real-token e2e
 - Phase 2.6 fix: verify Firebase ID tokens against the configured Firebase project id
 - Phase 2.7.1: fix API Dockerfile to bundle core/adapters; CI image-build check
+- Phase 2.7.2: runtime IAM — run-app (datastore/aiplatform/run.invoker) + mcp-run SA (plan only)
