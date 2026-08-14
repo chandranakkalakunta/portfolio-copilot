@@ -28,6 +28,9 @@ class MCPSettings(BaseSettings):
 
     # Streamable-HTTP MCP path on the market-data service.
     market_data_mcp_url: str = "http://localhost:8081/mcp"
+    # ``auto`` = ID token when URL is https (private Cloud Run); never for http.
+    # Override with ``true`` / ``false``.
+    mcp_require_auth: str = "auto"
 
 
 class FirebaseWebSettings(BaseSettings):

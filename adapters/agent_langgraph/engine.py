@@ -6,8 +6,6 @@ from typing import Any
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langchain_core.tools import tool
-from langchain_google_vertexai import ChatVertexAI
-from langgraph.prebuilt import create_react_agent
 
 from core.analysis.stub_tools import get_quote as core_get_quote
 from core.config import LLMSettings
@@ -69,12 +67,21 @@ class LangGraphAnalysisEngine:
 
     def __init__(self, settings: LLMSettings | None = None) -> None:
         self._settings = settings or LLMSettings()
+        self._llm: Any = None
+        self._graph: Any = None
+
+    def _ensure_runtime(self) -> None:
+        """Import Vertex / LangGraph only on the analysis path."""
+        if self._graph is not None:
+            return
+        from langchain_google_vertexai import ChatVertexAI
+        from langgraph.prebuilt import create_react_agent
+
         self._llm = ChatVertexAI(
             model=self._settings.gemini_model,
             project=self._settings.gcp_project,
             location=self._settings.vertex_location,
         )
-        # Idiomatic minimal ReAct agent (create_react_agent).
         self._graph = create_react_agent(
             model=self._llm,
             tools=[get_quote],
@@ -84,6 +91,7 @@ class LangGraphAnalysisEngine:
 
     async def analyze(self, request: AnalysisRequest) -> AnalysisResult:
         """Run the LangGraph stock-analyst agent for ``request.ticker``."""
+        self._ensure_runtime()
         prompt = (
             f"Analyze ticker {request.ticker}. "
             "Call get_quote for this ticker, then summarize the price in one sentence."

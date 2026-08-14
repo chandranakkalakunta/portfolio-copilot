@@ -13,10 +13,7 @@ import uuid
 from collections.abc import Awaitable, Callable
 from typing import Any
 
-from google.adk.agents import Agent
-from google.adk.runners import InMemoryRunner
-from mcp import Client
-
+from adapters.mcp_http import open_mcp_client
 from core.config import LLMSettings, MCPSettings
 from core.ports.agent_framework import (
     DEFAULT_DISCLAIMER,
@@ -117,12 +114,22 @@ class AdkAnalysisEngine:
         self._settings = settings or LLMSettings()
         self._mcp_settings = mcp_settings or MCPSettings()
         self._mcp_url = self._mcp_settings.market_data_mcp_url
+        self._mcp_require_auth = self._mcp_settings.mcp_require_auth
         self._mcp_call = mcp_call
         # Captured tool payloads for citation building (filled during tool calls).
         self._last_tool_payloads: dict[str, dict[str, Any]] = {}
+        # Built on first analyze() so importing / constructing the adapter is cheap.
+        self._agent: Any = None
+        self._runner: Any = None
+
+    def _ensure_runtime(self) -> None:
+        """Import ADK and build the agent only on the analysis path."""
+        if self._runner is not None:
+            return
+        from google.adk.agents import Agent
+        from google.adk.runners import InMemoryRunner
 
         _configure_vertex_env(self._settings)
-
         engine = self
 
         async def get_quote(ticker: str) -> dict[str, Any]:
@@ -148,7 +155,10 @@ class AdkAnalysisEngine:
         if self._mcp_call is not None:
             payload = await self._mcp_call(name, arguments)
         else:
-            async with Client(self._mcp_url) as client:
+            async with open_mcp_client(
+                self._mcp_url,
+                self._mcp_require_auth,
+            ) as client:
                 result = await client.call_tool(name, arguments)
                 payload = _tool_result_to_dict(result)
         self._last_tool_payloads[name] = payload
@@ -156,6 +166,7 @@ class AdkAnalysisEngine:
 
     async def analyze(self, request: AnalysisRequest) -> AnalysisResult:
         """Run the fundamental analyst for ``request.ticker`` via MCP tools."""
+        self._ensure_runtime()
         self._last_tool_payloads = {}
         session_id = f"fundamental-{uuid.uuid4()}"
         prompt = (
