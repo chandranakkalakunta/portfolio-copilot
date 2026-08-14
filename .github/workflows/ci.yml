@@ -101,3 +101,13 @@ jobs:
           FIRESTORE_EMULATOR_HOST: 127.0.0.1:8080
           FIRESTORE_EMULATOR_PROJECT: pcopilot-ci-emulator
         run: uv run pytest -m integration -q
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build API image
+        # Build only (no push). Catches missing COPY of core/adapters and similar packaging breaks.
+        run: docker build --build-arg BUILD_ID=ci -t pcopilot-api:ci .

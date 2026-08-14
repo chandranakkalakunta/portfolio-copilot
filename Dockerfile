@@ -6,6 +6,8 @@ WORKDIR /app
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
+COPY core ./core
+COPY adapters ./adapters
 COPY api ./api
 COPY web ./web
 EXPOSE 8080
