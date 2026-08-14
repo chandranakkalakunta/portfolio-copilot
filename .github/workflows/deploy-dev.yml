@@ -7,6 +7,10 @@ permissions:
   contents: read
   id-token: write
 concurrency: deploy-dev
+env:
+  PROJECT_ID: pcopilot-dev
+  REGION: asia-south1
+  AR: asia-south1-docker.pkg.dev/pcopilot-dev/containers
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,20 +25,50 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker asia-south1-docker.pkg.dev --quiet
-      - name: Build and push image
+
+      - name: Build and push MCP image
         run: |
-          IMAGE="asia-south1-docker.pkg.dev/pcopilot-dev/containers/hello:${GITHUB_SHA}"
-          docker build --build-arg BUILD_ID="${GITHUB_SHA}" -t "$IMAGE" .
-          docker push "$IMAGE"
-          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
-      - name: Deploy to Cloud Run
+          MCP_IMAGE="${AR}/market-data-mcp:${GITHUB_SHA}"
+          docker build --build-arg BUILD_ID="${GITHUB_SHA}" -f mcp_servers/market_data/Dockerfile -t "$MCP_IMAGE" .
+          docker push "$MCP_IMAGE"
+          echo "MCP_IMAGE=$MCP_IMAGE" >> "$GITHUB_ENV"
+
+      - name: Build and push API image
+        run: |
+          API_IMAGE="${AR}/api:${GITHUB_SHA}"
+          docker build --build-arg BUILD_ID="${GITHUB_SHA}" -t "$API_IMAGE" .
+          docker push "$API_IMAGE"
+          echo "API_IMAGE=$API_IMAGE" >> "$GITHUB_ENV"
+
+      - name: Deploy market-data-mcp (private)
+        run: |
+          gcloud run deploy market-data-mcp \
+            --image "$MCP_IMAGE" \
+            --region "$REGION" --project "$PROJECT_ID" \
+            --service-account mcp-run@pcopilot-dev.iam.gserviceaccount.com \
+            --no-allow-unauthenticated \
+            --cpu-boost --timeout 300 --min-instances 0 \
+            --set-env-vars "BUILD_ID=${GITHUB_SHA}" \
+            --quiet
+          MCP_URL="$(gcloud run services describe market-data-mcp --region "$REGION" --project "$PROJECT_ID" --format='value(status.url)')"
+          echo "MCP_URL=$MCP_URL" >> "$GITHUB_ENV"
+
+      - name: Deploy api (public)
         run: |
           DEPLOY_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          gcloud run deploy hello \
-            --image "$IMAGE" \
-            --region asia-south1 \
-            --project pcopilot-dev \
+          gcloud run deploy api \
+            --image "$API_IMAGE" \
+            --region "$REGION" --project "$PROJECT_ID" \
             --service-account run-app@pcopilot-dev.iam.gserviceaccount.com \
-            --set-env-vars "BUILD_ID=${GITHUB_SHA},DEPLOY_TIME=${DEPLOY_TIME}" \
+            --allow-unauthenticated \
+            --cpu-boost --timeout 300 --min-instances 0 \
+            --set-env-vars "^##^BUILD_ID=${GITHUB_SHA}##DEPLOY_TIME=${DEPLOY_TIME}##PCOPILOT_AUTH_BACKEND=firebase##PCOPILOT_REPO_BACKEND=firestore##PCOPILOT_ANALYSIS_BACKEND=adk##PCOPILOT_GCP_PROJECT=pcopilot-dev##PCOPILOT_VERTEX_LOCATION=us-central1##PCOPILOT_MARKET_DATA_MCP_URL=${MCP_URL}/mcp##PCOPILOT_MCP_REQUIRE_AUTH=auto##PCOPILOT_FIREBASE_PROJECT_ID=${{ vars.PCOPILOT_FIREBASE_PROJECT_ID }}##PCOPILOT_FIREBASE_AUTH_DOMAIN=${{ vars.PCOPILOT_FIREBASE_AUTH_DOMAIN }}##PCOPILOT_FIREBASE_API_KEY=${{ vars.PCOPILOT_FIREBASE_API_KEY }}" \
             --quiet
-          gcloud run services describe hello --region asia-south1 --project pcopilot-dev --format='value(status.url)'
+          API_URL="$(gcloud run services describe api --region "$REGION" --project "$PROJECT_ID" --format='value(status.url)')"
+          echo "API_URL=$API_URL" >> "$GITHUB_ENV"
+
+      - name: Smoke API /health and /config
+        run: |
+          curl -fsS "${API_URL}/health" | grep -q '"status":"ok"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' "${API_URL}/config")" = "200"
+          echo "Deployed API: ${API_URL}"

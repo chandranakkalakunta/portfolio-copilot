@@ -68,6 +68,11 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Domain Restricted Sharing exception for staging | Phase 2.7.3 | Open | Staging may need a DRS org-policy exception to allow limited public/test ingress; prod stays LB+NEG |
 | Cloud Run cold-start: lazy ADK/LangGraph/Vertex imports | Phase 2.7.3 | ✓ Done | `import api.main` stays light; engine built on first `/analyze` |
 | Private MCP service-to-service ID-token auth | Phase 2.7.3 | ✓ Done | `PCOPILOT_MCP_REQUIRE_AUTH` auto by URL scheme; adapters only (F55) |
+| 2.7.4 deploy (API + MCP to Cloud Run, dev) | Phase 2.7.4 | ✓ Done | `deploy-dev.yml`: MCP private (`mcp-run`) then API public (`run-app`); MCP-first URL wiring |
+| Delete stale `hello` Cloud Run service | Phase 2.7.x | Open | Superseded by `api` service |
+| Re-tighten project DRS after staging (prefer service-scoped public / LB+NEG for prod) | Phase 2.7.x | Open | Staging DRS exception is temporary |
+| Add deployed API URL to Firebase authorized domains | Phase 2.7.4 | Open | Coordinator console step (post-deploy) |
+| Re-tighten gh-deployer from run.admin to run.developer + service-scoped invoker mgmt for prod | Phase 2.7.x | Open | run.admin is the minimal grant that includes setIamPolicy for staging public api |
 
 ## Deferred (seeded)
 
