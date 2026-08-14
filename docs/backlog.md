@@ -62,17 +62,18 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Identity Platform Google-provider + OAuth client (console) | Phase 2.6 | Residual | UI + `/config` shipped; consent screen / Web client / authorized origin `http://localhost:8000` remain console-only |
 | GET foreign portfolio returns 403 (leaks existence) → 404 | Phase 2.x | Open | Privacy: treat other-user resources as not found; 2.5 returns 403 `not portfolio owner` |
 | API image packaging (core/adapters/api/web) + CI `docker-build` | Phase 2.7.1 | ✓ Done | Root Dockerfile bundles importable source; MCP stays its own image |
-| Runtime IAM: run-app datastore/aiplatform/run.invoker + mcp-run SA | Phase 2.7.2 | Plan only | Apply after review; no SA keys |
+| Runtime IAM: run-app datastore/aiplatform/run.invoker + mcp-run SA | Phase 2.7.2 | ✓ Done | Applied & verified 2026-08-14; run-app 3 roles + mcp-run SA + deployer actAs |
 | Tighten `roles/run.invoker` from project-scoped to service-level | Phase 2.7.x | Open | Project-scoped is acceptable for staging; prod should be MCP-service-only |
 | Prod public ingress via LB + NEG | Phase 2.7.x | Open | Cloud Run stays private; public path is HTTPS LB → Serverless NEG |
-| Domain Restricted Sharing exception for staging | Phase 2.7.3 | Open | Staging may need a DRS org-policy exception to allow limited public/test ingress; prod stays LB+NEG |
+| Domain Restricted Sharing exception for staging | Phase 2.7.3 | ✓ Done | `allowAll:true` on `iam.allowedPolicyMemberDomains`, pcopilot-dev, 2026-08-14 |
 | Cloud Run cold-start: lazy ADK/LangGraph/Vertex imports | Phase 2.7.3 | ✓ Done | `import api.main` stays light; engine built on first `/analyze` |
 | Private MCP service-to-service ID-token auth | Phase 2.7.3 | ✓ Done | `PCOPILOT_MCP_REQUIRE_AUTH` auto by URL scheme; adapters only (F55) |
 | 2.7.4 deploy (API + MCP to Cloud Run, dev) | Phase 2.7.4 | ✓ Done | `deploy-dev.yml`: MCP private (`mcp-run`) then API public (`run-app`); MCP-first URL wiring |
 | Delete stale `hello` Cloud Run service | Phase 2.7.x | Open | Superseded by `api` service |
 | Re-tighten project DRS after staging (prefer service-scoped public / LB+NEG for prod) | Phase 2.7.x | Open | Staging DRS exception is temporary |
-| Add deployed API URL to Firebase authorized domains | Phase 2.7.4 | Open | Coordinator console step (post-deploy) |
+| Add deployed API URL to Firebase authorized domains | Phase 2.7.4 | ✓ Done | Added; e2e sign-in verified on the deployed URL |
 | Re-tighten gh-deployer from run.admin to run.developer + service-scoped invoker mgmt for prod | Phase 2.7.x | Open | run.admin is the minimal grant that includes setIamPolicy for staging public api |
+| Pre-auth UI shows a "Database is closing/hidden" status line before sign-in | Phase 6 | Open | Cosmetic; Firestore verified healthy post-auth |
 
 ## Deferred (seeded)
 
