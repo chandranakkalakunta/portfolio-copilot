@@ -1,10 +1,10 @@
 # Portfolio Copilot — Implementation Phases
 
 **Document:** Implementation Phases (Roadmap)
-**Version:** 0.1 (draft)
-**Last updated:** 12 August 2026
-**Status:** Draft for review
-**Related documents:** `docs/requirements/Portfolio-Copilot-Requirements.md` (v0.3.2), `docs/architecture/Portfolio-Copilot-Architecture.md` (v0.1), `docs/adr/` (0001–0012), Multi-Agent Engineering Protocol v4.0 (`chandra-prompts/`).
+**Version:** 0.2 (draft)
+**Last updated:** 14 August 2026
+**Status:** Active (living roadmap)
+**Related documents:** `docs/requirements/Portfolio-Copilot-Requirements.md` (v0.4), `docs/architecture/Portfolio-Copilot-Architecture.md` (v0.1), `docs/adr/` (0001–0015), `docs/backlog.md`, `docs/phase-closure/`, `docs/learnings/`, Multi-Agent Engineering Protocol v4.3 (`chandra-prompts/`).
 
 > **Positioning & disclaimer.** Portfolio Copilot is **display-only** — no real trades, no money movement. All outputs are informational and **not investment advice**. This holds in every phase.
 
@@ -14,7 +14,7 @@
 
 This roadmap turns the requirements (F#/A#/O#) and ADRs into an ordered, PR-gated build. It follows two disciplines:
 
-1. **Engineering protocol phase-gating** (v4.0 §2–§3). Each phase is broken into sub-phases; **one sub-phase per Claude Code prompt**; design discussion precedes code; the Coordinator validates in a fresh terminal and merges per risk tier; risk-sensitive work gets cross-model review (Grok). Nothing lands on `main` except through a PR.
+1. **Engineering protocol phase-gating** (v4.3 §2–§3). Each phase is broken into sub-phases; **one sub-phase per Worker prompt (Claude Code or Grok CLI)**; design discussion precedes code; the Coordinator validates in a fresh terminal and merges per risk tier; risk-sensitive work gets cross-model review (Grok). Nothing lands on `main` except through a PR.
 2. **Walking skeleton, then breadth.** We build a thin *end-to-end* slice early (auth → a holding → one agent → a cited note in the UI, deployed), then widen it. This de-risks integration and gives a working product to iterate on, rather than a big-bang integration at the end.
 
 Each phase below lists its **goal**, **key requirements/ADRs**, **deliverables**, and **exit criteria**. Sub-phase breakdown and execution prompts are produced per-phase at build time (not pre-written), per protocol §2.1.
@@ -33,20 +33,23 @@ Each phase below lists its **goal**, **key requirements/ADRs**, **deliverables**
 ## 3. Phases
 
 ### Phase 0 — Foundations & Rails
+**Status:** Complete — see `docs/phase-closure/phase-0.md`.
 **Goal:** the production-grade skeleton before any feature — repo, CI/CD, environments, keyless identity, hexagonal scaffolding, observability baseline.
 **Requirements/ADRs:** O1–O6 (CI/CD, environments, IaC), F55 (no cloud SDK in core), ADR-0001 (hexagonal), ADR-0002 (GCP), ADR-0009 (keyless), ADR-0011 (tech stack).
 **Deliverables:** monorepo layout (architecture §18); `core/ports` interfaces stubbed; CI (lint, type-check, unit, secret/dependency scan) with branch-protected `main`; Terraform for dev/staging + keyless WIF deploy to Cloud Run; a "hello, healthcheck" service deployed; CHANGELOG, `docs/backlog.md`, ADR flow live.
 **Exit criteria:** a trivial service builds in CI and deploys to staging via keyless CD; no core package imports a cloud SDK (CI-checked); rollback verified.
 
 ### Phase 1 — Agent Framework Spike (ADK vs LangGraph)
+**Status:** Complete — see `docs/phase-closure/phase-1.md`.
 **Goal:** decide the framework by building, not guessing.
 **Requirements/ADRs:** F21, F54, architecture §16, ADR-0012 (moves Proposed → Accepted here).
 **Deliverables:** the same minimal slice (one specialist agent + orchestrator calling one stub tool) implemented against **both** an ADK adapter and a LangGraph adapter of `AgentFrameworkPort`; a written comparison; **ADR-0012 accepted**.
 **Exit criteria:** primary framework selected and recorded; the non-primary adapter retained as portability proof (F56); core untouched by the choice.
 
 ### Phase 2 — Walking Skeleton (thin vertical slice)
+**Status:** Complete — see `docs/phase-closure/phase-2.md`.
 **Goal:** one working end-to-end path, deployed.
-**Requirements/ADRs:** F58 (Google Sign-In), F5/F6 (manual holding), F40–F42 (market-data MCP), F17/F25–F27 (one agent → cited note), F45 (minimal UI), ADR-0003 (display-only), ADR-0005 (MCP), ADR-0006 partial.
+**Requirements/ADRs:** F58 (Google Sign-In), F5/F6 (manual holding), F40–F42 (market-data MCP), F17/F25–F27 (one agent → cited note), F45 (minimal UI), ADR-0003 (display-only), ADR-0005 (MCP), ADR-0015 (MCP over HTTP; supersedes ADR-0005 transport), ADR-0006 partial.
 **Deliverables:** Google Sign-In via the auth port; create a portfolio + add one holding (manual); **market-data MCP server** (real quotes, cached); **fundamental agent + orchestrator** produce a cited note for one ticker; a minimal web page shows the note with disclaimer; deployed to staging.
 **Exit criteria:** a signed-in user can add a holding and get a cited, disclaimed analysis for it in the browser, end to end, in staging.
 
@@ -109,6 +112,7 @@ Applied continuously, not as phases (protocol):
 - **Risk-tiered review** (§3.5): money-adjacent logic, auth, IAM/Terraform, LLM tool-call handling, and MCP contracts get full Strategist + cross-model (Grok) review.
 - **Secret hygiene** and **keyless identity** throughout (ADR-0009); **display-only** invariant re-checked (ADR-0003).
 - **Data-as-of** markers and **disclaimers** on every user-facing value/output.
+- Per protocol **§7.9**, each phase closes with a **phase-closure report**, a **README refresh**, and any new **learnings**.
 
 ## 5. Sequencing rationale (why this order)
 
@@ -120,7 +124,7 @@ Rails first (Phase 0) so every later slice ships on a safe, observable pipeline.
 |---|---|
 | 0 Foundations | O1–O6, F55, ADR-0001/0002/0009/0011 |
 | 1 Spike | F21, F54, ADR-0012 |
-| 2 Walking skeleton | F58, F5/F6, F40–F42, F17, F25–F27, F45, ADR-0003/0005 |
+| 2 Walking skeleton | F58, F5/F6, F40–F42, F17, F25–F27, F45, ADR-0003/0005/0015 |
 | 3 Valuation | F10–F14, F29, ADR-0004/0010 |
 | 4 Analysis engine | F18–F24, A1/A2/A6, F49–F52, ADR-0006/0007/0008 |
 | 5 Discovery | F18–F20, F40/F44, F23 |
@@ -132,6 +136,6 @@ Rails first (Phase 0) so every later slice ships on a safe, observable pipeline.
 
 ## 7. Immediate next step
 
-Begin **Phase 0** under the engineering protocol: Strategist runs the opening self-certification (§0.1), holds a short design discussion on the repo/CI/IaC choices, then writes the **first Claude Code Terminal execution prompt** (§2.2) for the Coordinator to run. No code is written in chat.
+**Phases 0–2 are complete (M1 done).** Closure reports: `docs/phase-closure/phase-0.md`, `phase-1.md`, `phase-2.md`. Next is **Phase 3 — Valuation, Performance & Recommendation Logging** (F10–F14, F29). Sub-phase breakdown is produced at build time (protocol §2.1).
 
 *Next document (optional): a per-phase design note in `docs/design/` as each phase begins.*

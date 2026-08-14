@@ -74,6 +74,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Add deployed API URL to Firebase authorized domains | Phase 2.7.4 | ✓ Done | Added; e2e sign-in verified on the deployed URL |
 | Re-tighten gh-deployer from run.admin to run.developer + service-scoped invoker mgmt for prod | Phase 2.7.x | Open | run.admin is the minimal grant that includes setIamPolicy for staging public api |
 | Pre-auth UI shows a "Database is closing/hidden" status line before sign-in | Phase 6 | Open | Cosmetic; Firestore verified healthy post-auth |
+| Run + document a Cloud Run revision-rollback drill — Phase 0 exit criterion 'rollback verified' has no recorded evidence | Phase 0/9 | Open | |
 
 ## Deferred (seeded)
 
