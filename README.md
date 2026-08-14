@@ -93,6 +93,7 @@ Environment setup for a fresh GCP project is documented in `docs/runbooks/enviro
 
 ```
 docs/
+├── STATUS.md         # Current phase / handoff (resume here)
 ├── product/          # One-Pager (vision, positioning)
 ├── requirements/     # Detailed PRD (functional + non-functional + operational)
 ├── architecture/     # Technical architecture (C4, agents, MCP, data, deployment)
