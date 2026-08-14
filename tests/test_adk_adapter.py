@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from typing import Any
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock
 
 from adapters.agent_adk.engine import AdkAnalysisEngine
 from core.config import LLMSettings, MCPSettings
@@ -71,12 +71,9 @@ def test_analyze_with_monkeypatched_runner() -> None:
         mcp_settings=MCPSettings(market_data_mcp_url="http://localhost:9/mcp"),
         mcp_call=_mcp,
     )
-    with patch.object(
-        engine._runner,
-        "run_debug",
-        new=AsyncMock(return_value=fake_events),
-    ):
-        result = asyncio.run(engine.analyze(AnalysisRequest(ticker="AAPL")))
+    engine._runner = AsyncMock()
+    engine._runner.run_debug = AsyncMock(return_value=fake_events)
+    result = asyncio.run(engine.analyze(AnalysisRequest(ticker="AAPL")))
 
     assert isinstance(result, AnalysisResult)
     assert result.framework == "adk"

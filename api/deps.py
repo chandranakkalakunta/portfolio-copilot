@@ -97,8 +97,7 @@ def wire_app_state(app: object) -> None:
         state.profile_repo = profiles
         state.portfolio_repo = portfolios
         state.position_repo = positions
-    if getattr(state, "analysis_engine", None) is None:
-        state.analysis_engine = _build_analysis_engine()
+    # analysis_engine is built on first /analyze so /health cold-start stays light.
 
 
 def get_auth_port(request: Request) -> AuthPort:
@@ -123,6 +122,8 @@ def get_position_repo(request: Request) -> PositionRepository:
 
 def get_analysis_engine(request: Request) -> AgentFrameworkPort:
     wire_app_state(request.app)
+    if getattr(request.app.state, "analysis_engine", None) is None:
+        request.app.state.analysis_engine = _build_analysis_engine()
     return request.app.state.analysis_engine  # type: ignore[no-any-return]
 
 

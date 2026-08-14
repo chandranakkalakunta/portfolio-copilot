@@ -36,7 +36,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | — | Confirmed Vertex Gemini model/region (Phase 1.2 live smoke) | Phase 1.2 | ✓ Done | `gemini-2.5-flash` @ `us-central1` (ADC/keyless); `gemini-2.0-flash` 404 in project |
 | — | LangGraph adapter parity (same instruction/tool/model as ADK) | Phase 1.3 | ✓ Done | `create_react_agent` + `ChatVertexAI`; live smoke on AAPL |
 | F57 | Market-data MCP (yfinance skeleton) | Phase 2.1 | ✓ Done | `get_quote` / `get_fundamentals`; swap to licensed/paid behind MarketDataPort later; India coverage partial |
-| ADR-0015 | MCP HTTP microservices (all envs) | Phase 2.2.1 | ✓ Done (market-data) | streamable-HTTP + `/health`; prod = own Cloud Run (2.7); private ingress + token auth later |
+| ADR-0015 | MCP HTTP microservices (all envs) | Phase 2.2.1–2.7.3 | ✓ Done (market-data) | streamable-HTTP + `/health`; private Cloud Run ID-token auth (https auto; http token-free) |
 
 ## Operational
 
@@ -66,6 +66,8 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Tighten `roles/run.invoker` from project-scoped to service-level | Phase 2.7.x | Open | Project-scoped is acceptable for staging; prod should be MCP-service-only |
 | Prod public ingress via LB + NEG | Phase 2.7.x | Open | Cloud Run stays private; public path is HTTPS LB → Serverless NEG |
 | Domain Restricted Sharing exception for staging | Phase 2.7.3 | Open | Staging may need a DRS org-policy exception to allow limited public/test ingress; prod stays LB+NEG |
+| Cloud Run cold-start: lazy ADK/LangGraph/Vertex imports | Phase 2.7.3 | ✓ Done | `import api.main` stays light; engine built on first `/analyze` |
+| Private MCP service-to-service ID-token auth | Phase 2.7.3 | ✓ Done | `PCOPILOT_MCP_REQUIRE_AUTH` auto by URL scheme; adapters only (F55) |
 
 ## Deferred (seeded)
 

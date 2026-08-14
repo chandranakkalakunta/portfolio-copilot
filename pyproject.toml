@@ -66,6 +66,10 @@ module = [
     "google.cloud.firestore_v1.*",
     "firebase_admin",
     "firebase_admin.*",
+    "google.auth",
+    "google.auth.*",
+    "google.oauth2",
+    "google.oauth2.*",
 ]
 ignore_missing_imports = true
 

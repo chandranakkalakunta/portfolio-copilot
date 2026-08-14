@@ -14,17 +14,11 @@ from core.ports.agent_framework import AgentFrameworkPort, AnalysisRequest, Anal
 
 
 def test_langgraph_engine_is_agent_framework_port() -> None:
-    """Structural: class has analyze; construction patched to avoid Vertex client."""
-    with (
-        patch("adapters.agent_langgraph.engine.ChatVertexAI") as mock_llm_cls,
-        patch("adapters.agent_langgraph.engine.create_react_agent") as mock_create,
-    ):
-        mock_llm_cls.return_value = MagicMock(name="llm")
-        mock_create.return_value = MagicMock(name="graph")
-        engine: AgentFrameworkPort = LangGraphAnalysisEngine(
-            settings=LLMSettings(gemini_model="test-model"),
-        )
-        assert callable(engine.analyze)
+    """Structural: class has analyze; construction does not import Vertex."""
+    engine: AgentFrameworkPort = LangGraphAnalysisEngine(
+        settings=LLMSettings(gemini_model="test-model"),
+    )
+    assert callable(engine.analyze)
 
 
 def test_get_quote_tool_wrapper_returns_dict() -> None:
@@ -57,8 +51,8 @@ def test_analyze_with_monkeypatched_graph() -> None:
     ]
 
     with (
-        patch("adapters.agent_langgraph.engine.ChatVertexAI") as mock_llm_cls,
-        patch("adapters.agent_langgraph.engine.create_react_agent") as mock_create,
+        patch("langchain_google_vertexai.ChatVertexAI") as mock_llm_cls,
+        patch("langgraph.prebuilt.create_react_agent") as mock_create,
     ):
         mock_llm_cls.return_value = MagicMock(name="llm")
         graph = MagicMock(name="graph")
