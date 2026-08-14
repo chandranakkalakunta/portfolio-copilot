@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio Copilot — UI direction (Ledger)</title>
+<style>
+  :root{
+    --paper:#fbfbfc; --card:#ffffff; --ink:#14161a; --muted:#6b7280; --faint:#9aa0a8;
+    --line:#ebecef; --green:#16513b; --green-2:#2c6e52; --green-tint:#eaf1ec;
+    --gain:#157a4e; --loss:#b03a2e; --gain-tint:#eaf3ee; --loss-tint:#f8ecea;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#f3f4f6;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  body{padding:34px 18px;line-height:1.5}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;letter-spacing:-.2px}
+  .wrap{max-width:880px;margin:0 auto;background:var(--paper);border:1px solid var(--line);
+    border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(20,20,25,.05),0 18px 46px rgba(20,20,25,.08)}
+
+  /* signature: provenance bar */
+  .prov{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:9px 22px;
+    background:var(--green);color:#ddeae2;font-family:var(--mono);font-size:11px;letter-spacing:.3px}
+  .prov .b{color:#fff;font-weight:600} .prov .sep{color:#4d7d67}
+
+  .bar{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;
+    border-bottom:1px solid var(--line);background:var(--card)}
+  .brand{font-size:18px;font-weight:600;letter-spacing:-.3px}
+  .brand .co{color:var(--green)}
+  .brand .mk{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--faint);
+    display:block;margin-top:1px;text-transform:uppercase}
+  .chip{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+  .avatar{width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;
+    display:flex;align-items:center;justify-content:center;font-weight:600}
+
+  .body{padding:22px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+  .hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-top:7px}
+  .total{font-size:40px;font-weight:600;line-height:1}
+  .total .cur{font-family:var(--mono);font-size:15px;color:var(--muted);margin-right:8px;vertical-align:7px;letter-spacing:0}
+  .total .cents{color:var(--faint)}
+  .stamp{font-family:var(--mono);font-size:11px;color:var(--faint);text-align:right;white-space:nowrap}
+
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:20px}
+  .stat{background:var(--card);padding:15px 17px}
+  .stat .k{font-size:12px;color:var(--muted);margin-bottom:7px}
+  .stat .v{font-size:20px;font-weight:600}
+  .up{color:var(--gain)} .down{color:var(--loss)}
+  .delta{font-size:13px;font-weight:600;margin-left:2px;white-space:nowrap} .arw{font-size:10px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1.3fr;gap:16px;margin-top:16px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:17px}
+  .ptitle{font-size:13.5px;font-weight:600} .psub{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .twr{font-size:32px;font-weight:600;color:var(--gain);margin-top:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;font-size:12px;color:var(--muted)}
+  .legend i{display:inline-block;width:15px;height:2px;vertical-align:3px;margin-right:6px;border-radius:2px}
+  .mwr{margin-top:13px;font-size:12px;color:var(--muted)}
+  .mwr b{color:var(--green-2);font-weight:600;border-bottom:1px dashed #c3d3ca;cursor:pointer}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{text-align:right;font-weight:500;color:var(--muted);font-size:11px;letter-spacing:.4px;
+    text-transform:uppercase;padding:0 0 10px;font-family:var(--mono)}
+  th.l,td.l{text-align:left}
+  td{padding:12px 0;border-top:1px solid var(--line);text-align:right}
+  .tick{font-family:var(--mono);font-weight:600;letter-spacing:.3px}
+  .qty{font-family:var(--mono);color:var(--faint);font-size:11.5px;margin-left:2px}
+
+  .foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;padding:14px 22px;
+    border-top:1px solid var(--line);background:var(--card);font-size:11.5px;color:var(--muted)}
+  .dot{width:3px;height:3px;border-radius:50%;background:#cdd0d6}
+
+  @media(max-width:620px){.stats{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.total{font-size:32px}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="prov">
+      <span class="b">DISPLAY-ONLY</span><span class="sep">·</span>
+      <span>not investment advice</span><span class="sep">·</span>
+      <span>prices as of 2026-08-14 12:06 UTC</span><span class="sep">·</span>
+      <span>source: market-data MCP</span>
+    </div>
+
+    <div class="bar">
+      <div class="brand">Portfolio <span class="co">Copilot</span>
+        <span class="mk">Chandra AI Labs</span></div>
+      <div class="chip"><span class="avatar">C</span>admin@chandraailabs.com</div>
+    </div>
+
+    <div class="body">
+      <div class="eyebrow">Paper portfolio · US</div>
+      <div class="hero">
+        <div class="total num"><span class="cur">USD</span>59,592<span class="cents">.90</span></div>
+        <div class="stamp">valued 12:06 UTC<br>3 holdings</div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="k">Day change</div>
+          <div class="v up"><span class="num">+412.35</span><span class="delta"><span class="arw">▲</span> 0.70%</span></div>
+        </div>
+        <div class="stat">
+          <div class="k">Unrealized P&amp;L</div>
+          <div class="v up"><span class="num">+12,692.90</span><span class="delta"><span class="arw">▲</span> 27.1%</span></div>
+        </div>
+        <div class="stat">
+          <div class="k">Cost basis</div>
+          <div class="v"><span class="num" style="color:var(--ink)">46,900.00</span></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <div class="ptitle">Performance vs S&amp;P 500</div>
+          <div class="psub">Time-weighted return · since inception</div>
+          <div class="twr num">+18.4%</div>
+          <div class="legend">
+            <span><i style="background:var(--green)"></i>This portfolio</span>
+            <span><i style="background:#c4c6cc"></i>S&amp;P 500 <span class="num" style="color:var(--muted)">+11.2%</span></span>
+          </div>
+          <div class="mwr">Personal return incl. your timing: <b>show MWR</b></div>
+        </div>
+
+        <div class="panel">
+          <div class="ptitle" style="margin-bottom:12px">Growth of 100 invested</div>
+          <svg viewBox="0 0 360 148" width="100%" height="148" preserveAspectRatio="none" role="img" aria-label="Portfolio vs S&amp;P 500 growth">
+            <line x1="0" y1="118" x2="360" y2="118" stroke="#eeedf1" stroke-width="1"/>
+            <line x1="0" y1="79" x2="360" y2="79" stroke="#eeedf1" stroke-width="1"/>
+            <line x1="0" y1="40" x2="360" y2="40" stroke="#eeedf1" stroke-width="1"/>
+            <polyline points="4,116 55,109 100,111 150,90 200,83 250,66 300,49 356,31"
+              fill="none" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="4,119 55,115 100,114 150,103 200,100 250,90 300,82 356,70"
+              fill="none" stroke="#c4c6cc" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/>
+            <circle cx="356" cy="31" r="3.2" fill="var(--green)"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <table>
+          <thead><tr><th class="l">Holding</th><th>Price</th><th>Market value</th><th>Unrealized P&amp;L</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="l"><span class="tick">NVDA</span><span class="qty">200 sh · cost 130.00</span></td>
+              <td class="num">178.40</td><td class="num">35,680.00</td>
+              <td class="num up">+9,680.00 <span class="delta"><span class="arw">▲</span> 37.2%</span></td>
+            </tr>
+            <tr>
+              <td class="l"><span class="tick">AAPL</span><span class="qty">40 sh · cost 210.00</span></td>
+              <td class="num">305.26</td><td class="num">12,210.40</td>
+              <td class="num up">+3,990.40 <span class="delta"><span class="arw">▲</span> 45.4%</span></td>
+            </tr>
+            <tr>
+              <td class="l"><span class="tick">MSFT</span><span class="qty">25 sh · cost 500.00</span></td>
+              <td class="num">468.10</td><td class="num">11,702.50</td>
+              <td class="num down">−797.50 <span class="delta"><span class="arw">▼</span> 6.4%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>Every value carries an as-of time and source</span><span class="dot"></span>
+      <span>Never executes trades</span><span class="dot"></span>
+      <span class="num" style="color:var(--faint)">build 2ca632e</span>
+    </div>
+  </div>
+</body>
+</html>
