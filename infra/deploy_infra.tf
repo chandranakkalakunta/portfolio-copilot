@@ -10,9 +10,9 @@ resource "google_service_account" "run_app" {
   display_name = "Cloud Run runtime SA (Portfolio Copilot) — no roles for hello service"
 }
 
-resource "google_project_iam_member" "deployer_run_developer" {
+resource "google_project_iam_member" "deployer_run_admin" {
   project = var.project_id
-  role    = "roles/run.developer"
+  role    = "roles/run.admin"
   member  = "serviceAccount:${google_service_account.gh_deployer.email}"
 }
 

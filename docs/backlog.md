@@ -72,6 +72,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Delete stale `hello` Cloud Run service | Phase 2.7.x | Open | Superseded by `api` service |
 | Re-tighten project DRS after staging (prefer service-scoped public / LB+NEG for prod) | Phase 2.7.x | Open | Staging DRS exception is temporary |
 | Add deployed API URL to Firebase authorized domains | Phase 2.7.4 | Open | Coordinator console step (post-deploy) |
+| Re-tighten gh-deployer from run.admin to run.developer + service-scoped invoker mgmt for prod | Phase 2.7.x | Open | run.admin is the minimal grant that includes setIamPolicy for staging public api |
 
 ## Deferred (seeded)
 
