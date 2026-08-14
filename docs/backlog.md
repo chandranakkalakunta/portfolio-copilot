@@ -61,6 +61,9 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Firestore security rules + composite indexes for portfolio queries | Phase 2.x | Open | After StatePort baseline (2.2) |
 | Identity Platform Google-provider + OAuth client (console) | Phase 2.6 | Residual | UI + `/config` shipped; consent screen / Web client / authorized origin `http://localhost:8000` remain console-only |
 | GET foreign portfolio returns 403 (leaks existence) → 404 | Phase 2.x | Open | Privacy: treat other-user resources as not found; 2.5 returns 403 `not portfolio owner` |
+| API image packaging (core/adapters/api/web) + CI `docker-build` | Phase 2.7.1 | ✓ Done | Root Dockerfile bundles importable source; MCP stays its own image |
+| Prod public ingress via LB + NEG | Phase 2.7.x | Open | Cloud Run stays private; public path is HTTPS LB → Serverless NEG |
+| Domain Restricted Sharing exception for staging | Phase 2.7.3 | Open | Staging may need a DRS org-policy exception to allow limited public/test ingress; prod stays LB+NEG |
 
 ## Deferred (seeded)
 
