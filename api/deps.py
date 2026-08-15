@@ -26,6 +26,7 @@ from core.ports.repositories import (
     PositionRepository,
     ProfileRepository,
 )
+from core.ports.timeseries import TimeSeriesPort
 
 
 def _build_auth_port() -> AuthPort:
@@ -85,6 +86,21 @@ def _build_analysis_engine() -> AgentFrameworkPort:
     return AdkAnalysisEngine()
 
 
+def _build_timeseries_port() -> TimeSeriesPort:
+    """Select TimeSeriesPort.
+
+    ``PCOPILOT_TIMESERIES_BACKEND``: ``memory`` (default) | ``bigquery``
+    """
+    backend = os.environ.get("PCOPILOT_TIMESERIES_BACKEND", "memory").lower()
+    if backend == "bigquery":
+        from adapters.store_bigquery.store import BigQueryTimeSeriesStore
+
+        return BigQueryTimeSeriesStore()
+    from adapters.memory.timeseries import InMemoryTimeSeriesStore
+
+    return InMemoryTimeSeriesStore()
+
+
 def wire_app_state(app: object) -> None:
     """Initialize process-wide ports on ``app.state`` (idempotent)."""
     state = getattr(app, "state", None)
@@ -97,7 +113,7 @@ def wire_app_state(app: object) -> None:
         state.profile_repo = profiles
         state.portfolio_repo = portfolios
         state.position_repo = positions
-    # analysis_engine is built on first /analyze so /health cold-start stays light.
+    # analysis_engine and timeseries_port are built on first use (cold-start).
 
 
 def get_auth_port(request: Request) -> AuthPort:
@@ -125,6 +141,13 @@ def get_analysis_engine(request: Request) -> AgentFrameworkPort:
     if getattr(request.app.state, "analysis_engine", None) is None:
         request.app.state.analysis_engine = _build_analysis_engine()
     return request.app.state.analysis_engine  # type: ignore[no-any-return]
+
+
+def get_timeseries_port(request: Request) -> TimeSeriesPort:
+    wire_app_state(request.app)
+    if getattr(request.app.state, "timeseries_port", None) is None:
+        request.app.state.timeseries_port = _build_timeseries_port()
+    return request.app.state.timeseries_port  # type: ignore[no-any-return]
 
 
 async def get_current_user(

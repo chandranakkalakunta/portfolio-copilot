@@ -75,6 +75,9 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Re-tighten gh-deployer from run.admin to run.developer + service-scoped invoker mgmt for prod | Phase 2.7.x | Open | run.admin is the minimal grant that includes setIamPolicy for staging public api |
 | Pre-auth UI shows a "Database is closing/hidden" status line before sign-in | Phase 6 | Open | Cosmetic; Firestore verified healthy post-auth |
 | Run + document a Cloud Run revision-rollback drill — Phase 0 exit criterion 'rollback verified' has no recorded evidence | Phase 0/9 | Open | |
+| TimeSeriesPort + BigQuery analytical store (dataset + 2 tables + run-app IAM) | Phase 3.1 | ✓ Done | Foundation only; no valuation logic/endpoints. Apply Terraform after review |
+| Valuation write-path: live compute + BQ history (no Firestore latest-cache) | Phase 3.x | Open | ADR-0004 follow-up |
+| Record TimeSeries ER extension in architecture doc §9 | Phase 3.x | Open | valuation_snapshots + recommendations |
 
 ## Deferred (seeded)
 
