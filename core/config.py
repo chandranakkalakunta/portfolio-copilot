@@ -48,3 +48,17 @@ class FirebaseWebSettings(BaseSettings):
 
     def is_complete(self) -> bool:
         return bool(self.api_key and self.auth_domain and self.project_id)
+
+
+class AnalyticsSettings(BaseSettings):
+    """Analytical store (TimeSeriesPort) settings.
+
+    Env: ``PCOPILOT_TIMESERIES_BACKEND``, ``PCOPILOT_BQ_DATASET``,
+    ``PCOPILOT_BQ_LOCATION``.
+    """
+
+    model_config = SettingsConfigDict(env_prefix="PCOPILOT_")
+
+    timeseries_backend: str = "memory"
+    bq_dataset: str = "pcopilot_analytics"
+    bq_location: str = "asia-south1"

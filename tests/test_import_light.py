@@ -13,6 +13,7 @@ _HEAVY = (
     "langgraph",
     "langchain_google_vertexai",
     "vertexai",
+    "google.cloud.bigquery",
 )
 
 

@@ -40,3 +40,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs: roadmap #33 amend — §1 protocol v4.3 + Worker=Grok; ADR-0015 on Phase 2; rollback-drill backlog row
 - docs: add UI/UX spec (docs/design/ui-spec.md, v0.1) + reference mockup (Ledger direction); living doc per §7.9
 - docs: replace HTML mockup with screenshot `docs/design/ui-mockups/portfolio-overview.png`
+- Phase 3.1: TimeSeriesPort + BigQuery analytical store (foundation)
