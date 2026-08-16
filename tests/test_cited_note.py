@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from decimal import Decimal
 from typing import Any
 from unittest.mock import AsyncMock
 
@@ -130,3 +131,6 @@ def test_cited_note_has_citations_disclaimer_and_tool_calls() -> None:
         assert citation.as_of
         assert citation.detail
     assert result.rating == "informational"
+    assert result.price_at_issue == Decimal(str(232.10))
+    assert result.currency == "USD"
+    assert result.price_as_of is not None

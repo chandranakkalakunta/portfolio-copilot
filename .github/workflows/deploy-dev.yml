@@ -62,7 +62,7 @@ jobs:
             --service-account run-app@pcopilot-dev.iam.gserviceaccount.com \
             --allow-unauthenticated \
             --cpu-boost --timeout 300 --min-instances 0 \
-            --set-env-vars "^##^BUILD_ID=${GITHUB_SHA}##DEPLOY_TIME=${DEPLOY_TIME}##PCOPILOT_AUTH_BACKEND=firebase##PCOPILOT_REPO_BACKEND=firestore##PCOPILOT_ANALYSIS_BACKEND=adk##PCOPILOT_GCP_PROJECT=pcopilot-dev##PCOPILOT_VERTEX_LOCATION=us-central1##PCOPILOT_MARKET_DATA_MCP_URL=${MCP_URL}/mcp##PCOPILOT_MCP_REQUIRE_AUTH=auto##PCOPILOT_FIREBASE_PROJECT_ID=${{ vars.PCOPILOT_FIREBASE_PROJECT_ID }}##PCOPILOT_FIREBASE_AUTH_DOMAIN=${{ vars.PCOPILOT_FIREBASE_AUTH_DOMAIN }}##PCOPILOT_FIREBASE_API_KEY=${{ vars.PCOPILOT_FIREBASE_API_KEY }}" \
+            --set-env-vars "^##^BUILD_ID=${GITHUB_SHA}##DEPLOY_TIME=${DEPLOY_TIME}##PCOPILOT_AUTH_BACKEND=firebase##PCOPILOT_REPO_BACKEND=firestore##PCOPILOT_ANALYSIS_BACKEND=adk##PCOPILOT_TIMESERIES_BACKEND=bigquery##PCOPILOT_GCP_PROJECT=pcopilot-dev##PCOPILOT_VERTEX_LOCATION=us-central1##PCOPILOT_MARKET_DATA_MCP_URL=${MCP_URL}/mcp##PCOPILOT_MCP_REQUIRE_AUTH=auto##PCOPILOT_FIREBASE_PROJECT_ID=${{ vars.PCOPILOT_FIREBASE_PROJECT_ID }}##PCOPILOT_FIREBASE_AUTH_DOMAIN=${{ vars.PCOPILOT_FIREBASE_AUTH_DOMAIN }}##PCOPILOT_FIREBASE_API_KEY=${{ vars.PCOPILOT_FIREBASE_API_KEY }}" \
             --quiet
           API_URL="$(gcloud run services describe api --region "$REGION" --project "$PROJECT_ID" --format='value(status.url)')"
           echo "API_URL=$API_URL" >> "$GITHUB_ENV"

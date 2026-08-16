@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, ToolMessage
 from langchain_core.tools import tool
 
 from core.analysis.stub_tools import get_quote as core_get_quote
 from core.config import LLMSettings
 from core.ports.agent_framework import AnalysisRequest, AnalysisResult
+from core.tracking.quotes import structured_price_from_quote
 
 # Same instruction text as adapters/agent_adk/engine.py (parity for Phase 1.4).
 _AGENT_INSTRUCTION = (
@@ -103,6 +105,7 @@ class LangGraphAnalysisEngine:
 
         tool_calls: list[str] = []
         summary = ""
+        quote_payload: dict[str, Any] | None = None
         for message in messages:
             if isinstance(message, AIMessage):
                 for name in _tool_names_from_message(message):
@@ -111,10 +114,30 @@ class LangGraphAnalysisEngine:
                 text = _message_text(message.content).strip()
                 if text:
                     summary = text
+            elif isinstance(message, ToolMessage):
+                parsed = _tool_payload(message.content)
+                if parsed is not None and "price" in parsed:
+                    quote_payload = parsed
 
+        price, as_of, currency = structured_price_from_quote(quote_payload)
         return AnalysisResult(
             ticker=request.ticker,
             summary=summary if summary else "(empty agent response)",
             tool_calls=tool_calls,
             framework="langgraph",
+            price_at_issue=price,
+            price_as_of=as_of,
+            currency=currency,
         )
+
+
+def _tool_payload(content: Any) -> dict[str, Any] | None:
+    if isinstance(content, dict):
+        return content
+    if not isinstance(content, str) or not content:
+        return None
+    try:
+        parsed: Any = json.loads(content)
+    except json.JSONDecodeError:
+        return None
+    return parsed if isinstance(parsed, dict) else None

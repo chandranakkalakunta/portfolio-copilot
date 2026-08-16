@@ -27,6 +27,7 @@ from core.ports.repositories import (
     ProfileRepository,
 )
 from core.ports.timeseries import TimeSeriesPort
+from core.tracking.service import RecommendationLogService
 
 
 def _build_auth_port() -> AuthPort:
@@ -148,6 +149,17 @@ def get_timeseries_port(request: Request) -> TimeSeriesPort:
     if getattr(request.app.state, "timeseries_port", None) is None:
         request.app.state.timeseries_port = _build_timeseries_port()
     return request.app.state.timeseries_port  # type: ignore[no-any-return]
+
+
+def get_recommendation_logger(
+    request: Request,
+) -> RecommendationLogService:
+    store = get_timeseries_port(request)
+    existing = getattr(request.app.state, "rec_logger", None)
+    if existing is None:
+        existing = RecommendationLogService(store)
+        request.app.state.rec_logger = existing
+    return existing
 
 
 async def get_current_user(

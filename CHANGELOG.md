@@ -41,3 +41,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs: add UI/UX spec (docs/design/ui-spec.md, v0.1) + reference mockup (Ledger direction); living doc per §7.9
 - docs: replace HTML mockup with screenshot `docs/design/ui-mockups/portfolio-overview.png`
 - Phase 3.1: TimeSeriesPort + BigQuery analytical store (foundation)
+- Phase 3.2: recommendation logging (F29) + GET /recommendations; structured price-at-issue; TIMESERIES_BACKEND=bigquery on API

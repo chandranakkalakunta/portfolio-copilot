@@ -1,14 +1,14 @@
 # Project Status / Handoff
 
-**Updated:** 14 August 2026
-**Phase:** 2 — Walking skeleton ✓ COMPLETE
+**Updated:** 16 August 2026
+**Phase:** 3 — Valuation, Performance & Recommendation Logging (in progress)
 
 ## How to resume in a fresh conversation (protocol §6.1)
 
 Provide the new Strategist:
 1. **Multi-Agent Engineering Protocol v4.3** (`chandra-prompts` repo).
 2. **This repo** — the source of truth: `docs/requirements` (v0.4), `docs/architecture` (v0.1), `docs/adr` (0001–0015), `docs/implementation` (roadmap), `docs/backlog.md`, `docs/phase-closure/`, `docs/learnings/`, `docs/design/ui-spec.md` (UI/UX spec, living), `CHANGELOG.md`, and this file.
-3. The line: **"Phase 2 complete — ready to begin Phase 3."**
+3. The line: **"Phase 3 in progress — 3.2 recommendation logging."**
 
 Worker = Grok CLI. One sub-phase per PR; pre-flight requires **no open PRs** (§0.1 #15). Phase-end **doc-hygiene** is mandatory (§7.8).
 
@@ -19,7 +19,9 @@ Worker = Grok CLI. One sub-phase per PR; pre-flight requires **no open PRs** (§
 - **Live e2e (2026-08-14):** signed in (Firebase Google) → saved an NVDA holding to Firestore → analyzed a ticker → cited note rendered with market-data MCP citations (`as_of`) + disclaimer. API logs: `POST /portfolios`, `POST /positions`, `POST /analyze`, `GET /me` all 200.
 
 ## Next (Phase 3)
-- **Phase 3 — Valuation, Performance & Recommendation Logging** (F10–F14, F29). Sub-phase breakdown is produced at build time (protocol §2.1).
+- **3.1** TimeSeriesPort + BigQuery analytical store ✓
+- **3.2** Recommendation logging (F29) + GET `/recommendations` ✓ (this slice)
+- Remaining: valuation compute, TWR vs S&P 500, snapshots, UI overview (F10–F14).
 
 ## Key facts
 - **Live API URL:** https://api-552451662981.asia-south1.run.app
