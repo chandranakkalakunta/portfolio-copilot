@@ -67,3 +67,5 @@ def test_analyze_with_monkeypatched_graph() -> None:
     assert result.ticker == "AAPL"
     assert result.tool_calls == ["get_quote"]
     assert "232.10" in result.summary
+    assert result.price_at_issue is not None
+    assert result.currency == "USD"

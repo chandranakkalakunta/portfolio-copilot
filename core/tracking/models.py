@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
 
 
 class Recommendation(BaseModel):
@@ -25,3 +25,7 @@ class Recommendation(BaseModel):
     note_ref: str | None = None
     model_attribution: str | None = None
     schema_version: int = Field(default=1)
+
+    @field_serializer("price_at_issue", when_used="json")
+    def _serialize_price_at_issue(self, value: Decimal) -> str:
+        return format(value, "f")

@@ -21,6 +21,7 @@ from core.ports.agent_framework import (
     AnalysisResult,
     Citation,
 )
+from core.tracking.quotes import structured_price_from_quote
 
 _FUNDAMENTAL_INSTRUCTION = (
     "You are a fundamental equity analyst. For the given ticker, call get_quote "
@@ -206,6 +207,9 @@ class AdkAnalysisEngine:
 
         summary = " ".join(summary_parts).strip()
         citations = _citations_from_tool_payloads(self._last_tool_payloads)
+        price, as_of, currency = structured_price_from_quote(
+            self._last_tool_payloads.get("get_quote")
+        )
         return AnalysisResult(
             ticker=request.ticker,
             summary=summary if summary else "(empty agent response)",
@@ -214,4 +218,7 @@ class AdkAnalysisEngine:
             citations=citations,
             disclaimer=DEFAULT_DISCLAIMER,
             rating="informational",
+            price_at_issue=price,
+            price_as_of=as_of,
+            currency=currency,
         )

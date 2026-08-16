@@ -93,6 +93,7 @@ def test_analyze_returns_cited_note(client: TestClient) -> None:
     assert body["disclaimer"]
     assert body["citations"]
     assert "get_quote" in body["tool_calls"]
+    assert body["price_at_issue"] == "100.0"
 
 
 def test_user_b_cannot_read_user_a_portfolio(client: TestClient) -> None:

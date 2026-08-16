@@ -76,6 +76,7 @@ Traceability of functional (F#), AI (A#), and operational (O#) requirements to i
 | Pre-auth UI shows a "Database is closing/hidden" status line before sign-in | Phase 6 | Open | Cosmetic; Firestore verified healthy post-auth |
 | Run + document a Cloud Run revision-rollback drill — Phase 0 exit criterion 'rollback verified' has no recorded evidence | Phase 0/9 | Open | |
 | TimeSeriesPort + BigQuery analytical store (dataset + 2 tables + run-app IAM) | Phase 3.1 | ✓ Done | Foundation only; no valuation logic/endpoints. Apply Terraform after review |
+| Recommendation logging on /analyze + GET /recommendations (F29) | Phase 3.2 | ✓ Done | Structured price-at-issue; non-fatal write; user-scoped read; BQ backend on API |
 | Valuation write-path: live compute + BQ history (no Firestore latest-cache) | Phase 3.x | Open | ADR-0004 follow-up |
 | Record TimeSeries ER extension in architecture doc §9 | Phase 3.x | Open | valuation_snapshots + recommendations |
 

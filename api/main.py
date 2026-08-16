@@ -13,7 +13,7 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 
 from api.deps import get_current_user, wire_app_state
-from api.routers import analyze, portfolios, positions, profile
+from api.routers import analyze, portfolios, positions, profile, recommendations
 from core.config import FirebaseWebSettings
 from core.ports.auth import AuthenticatedUser
 
@@ -37,6 +37,7 @@ app.include_router(profile.router)
 app.include_router(portfolios.router)
 app.include_router(positions.router)
 app.include_router(analyze.router)
+app.include_router(recommendations.router)
 
 
 class HealthResponse(TypedDict):

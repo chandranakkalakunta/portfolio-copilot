@@ -6,9 +6,11 @@ on results records which adapter produced the result (attribution).
 
 from __future__ import annotations
 
+from datetime import datetime
+from decimal import Decimal
 from typing import Protocol
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
 
 DEFAULT_DISCLAIMER = (
     "Not investment advice. All outputs are informational; the user is solely "
@@ -42,6 +44,13 @@ class AnalysisResult(BaseModel):
     disclaimer: str = DEFAULT_DISCLAIMER
     # Skeleton label; full trim/add/hold/sell + portfolio-fit arrive in Phase 4.
     rating: str = "informational"
+    price_at_issue: Decimal | None = None
+    price_as_of: datetime | None = None
+    currency: str | None = None
+
+    @field_serializer("price_at_issue", when_used="json")
+    def _serialize_price_at_issue(self, value: Decimal | None) -> str | None:
+        return format(value, "f") if value is not None else None
 
 
 class AgentFrameworkPort(Protocol):
